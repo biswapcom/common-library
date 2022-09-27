@@ -1,4 +1,8 @@
 import { TokenMap } from "../types";
+export declare const CAKE: TokenMap;
+export declare const BFG: TokenMap;
+export declare const BABY: TokenMap;
+export declare const BANANA: TokenMap;
 export declare const BSW: TokenMap;
 export declare const BTCB: TokenMap;
 export declare const BUSD: TokenMap;

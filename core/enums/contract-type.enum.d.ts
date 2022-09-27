@@ -1,4 +1,5 @@
 export declare enum ContractType {
-    Regular = "regular",
+    Common = "common",
+    Single = "single",
     DoublePool = "double-pool"
 }
