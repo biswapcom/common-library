@@ -1,6 +1,42 @@
 import { ChainId } from "@enums";
 import { TokenMap } from "@types";
 
+export const CAKE: TokenMap = {
+    [ChainId.BSC]: {
+        address: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
+        symbol: 'CAKE',
+        name: 'Pancake Swap',
+        core: false
+    }
+}
+
+export const BFG: TokenMap = {
+    [ChainId.BSC]: {
+        address: '0xBb46693eBbEa1aC2070E59B4D043b47e2e095f86',
+        symbol: 'BFG',
+        name: 'BFG Token',
+        core: false
+    }
+}
+
+export const BABY: TokenMap = {
+    [ChainId.BSC]: {
+        address: '0x53E562b9B7E5E94b81f10e96Ee70Ad06df3D2657',
+        symbol: 'BABY',
+        name: 'BabySwap Token',
+        core: false
+    }
+}
+
+export const BANANA: TokenMap = {
+    [ChainId.BSC]: {
+        address: '0x603c7f932ED1fc6575303D8Fb018fDCBb0f39a95',
+        symbol: 'BANANA',
+        name: 'ApeSwapFinance Banana',
+        core: false
+    }
+}
+
 export const BSW: TokenMap = {
     [ChainId.BSC]: {
         address: '0x965F527D9159dCe6288a2219DB51fc6Eef120dD1',
@@ -30,7 +66,7 @@ export const BUSD: TokenMap = {
 
 export const DAI: TokenMap = {
     [ChainId.BSC]: {
-        address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+        address: '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3',
         symbol: 'DAI',
         name: 'Dai',
         core: true
