@@ -16,9 +16,9 @@ Enums:
 1. Balance types
 2. Chain IDs
 3. Contract types
-   - common - ABI використовується для багатьох контрактів, наприклад - контракт пари
-   - regular - 
-   - double-pool - 
+   - common - ABI використовується для багатьох контрактів, наприклад - контракт пари, ERC20
+   - single - ABI + address - контракт в одному екземплярі
+   - double-pool - ABI + address + stake token
 4. Log levels
 5. Project names
 
