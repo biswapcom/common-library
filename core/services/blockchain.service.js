@@ -58,12 +58,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blockchainService = exports.BlockchainService = void 0;
 var _helpers_1 = require("../helpers");
 var _configs_1 = require("../configs");
 var api_service_1 = require("./api.service");
+var bignumber_js_1 = __importDefault(require("bignumber.js"));
 var tokens = __importStar(require("../constants/tokens"));
+bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
 var BlockchainService = /** @class */ (function () {
     function BlockchainService() {
     }

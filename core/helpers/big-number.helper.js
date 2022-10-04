@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.multiPlus = exports.toBN = void 0;
 var bignumber_js_1 = __importDefault(require("bignumber.js"));
+bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
 var toBN = function (value) {
     return new bignumber_js_1.default(value);
 };
