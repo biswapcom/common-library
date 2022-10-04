@@ -6,6 +6,8 @@ import { apiService } from "@src/services/api.service";
 import BN from "bignumber.js";
 import * as tokens from "@constants/tokens";
 
+BN.config({ EXPONENTIAL_AT: 1000000000 });
+
 export class BlockchainService {
 
     /**
