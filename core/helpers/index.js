@@ -53,7 +53,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sleep = void 0;
 __exportStar(require("./big-number.helper"), exports);
 /**
- * @param {number} ms
+ * @param {number} ms - Milliseconds
  * @returns {Promise<unknown>}
  */
 var sleep = function (ms) {

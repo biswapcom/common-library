@@ -15,7 +15,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./balance.type"), exports);
-__exportStar(require("./chain-id.enum"), exports);
-__exportStar(require("./contract-type.enum"), exports);
+__exportStar(require("./blockchain.enum"), exports);
 __exportStar(require("./log-level.enum"), exports);
 __exportStar(require("./project-name.enum"), exports);

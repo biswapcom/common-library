@@ -1,6 +1,42 @@
-import { Pair } from "../types";
+import { AbiItem } from "web3-utils";
+import { MulticallCall, Pair } from "../types";
+import { Contract } from "web3-eth-contract";
 import { ChainId } from "../enums";
+import Web3 from "web3";
+/**
+ * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
+ */
 export declare class BlockchainService {
+    private web3;
+    /**
+     * Web3 HTTP-provider
+     *
+     * @param {ChainId} chainId
+     * @return {Web3}
+     */
+    getWeb3(chainId?: ChainId): Web3;
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {AbiItem[]|string} abi
+     * @param {string} address
+     * @return {Contract}
+     */
+    getContract(abi: AbiItem[] | string, address: string): Contract;
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} name - Name of contract in DB
+     * @return {Contract}
+     */
+    getContractByName(name: string): Promise<Contract>;
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} address - Address of contract in DB
+     * @return {Contract}
+     */
+    getContractByAddress(address: string): Promise<Contract>;
     /**
      * Exchange liquidity provider token to USD
      *
@@ -10,6 +46,18 @@ export declare class BlockchainService {
      */
     exchangeLPTokenToUSD(amountFrom: string, pair: Pair, chainId?: ChainId): Promise<string>;
     exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
+    multiCall(ABI: any, calls: MulticallCall[], chainId?: ChainId): Promise<any>;
+    /**
+     * List of launchpool addresses
+     */
+    getPoolAddresses(): Promise<string[]>;
+    /**
+     * Generate pair address from tokens addresses
+     *
+     * @param {string} tokenA - Address of token A
+     * @param {string} tokenB - Address of token B
+     */
+    getPairAddress(tokenA: string, tokenB: string): Promise<string>;
     /**
      * List of core tokens
      *
@@ -24,13 +72,13 @@ export declare class BlockchainService {
      * @param {string} address
      * @param {number} chainId
      */
-    getSymbolByAddress(address: string, chainId?: ChainId): string;
+    getTokenSymbolByAddress(address: string, chainId?: ChainId): string;
     /**
      * Get address of token by symbol
      *
      * @param {string} symbol
      * @param {number} chainId
      */
-    getAddressBySymbol(symbol: string, chainId?: ChainId): string;
+    getTokenAddressBySymbol(symbol: string, chainId?: ChainId): string;
 }
 export declare const blockchainService: BlockchainService;

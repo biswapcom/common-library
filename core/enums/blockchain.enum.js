@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChainId = void 0;
+exports.ContractType = exports.ChainId = void 0;
 var ChainId;
 (function (ChainId) {
     ChainId[ChainId["AVALANCHE"] = 43114] = "AVALANCHE";
@@ -12,3 +12,9 @@ var ChainId;
     ChainId[ChainId["POLYGON"] = 137] = "POLYGON";
     ChainId[ChainId["POLYGON_TESTNET"] = 80001] = "POLYGON_TESTNET";
 })(ChainId = exports.ChainId || (exports.ChainId = {}));
+var ContractType;
+(function (ContractType) {
+    ContractType["Common"] = "common";
+    ContractType["Single"] = "single";
+    ContractType["DoublePool"] = "double-pool";
+})(ContractType = exports.ContractType || (exports.ContractType = {}));

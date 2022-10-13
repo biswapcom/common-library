@@ -1,7 +1,7 @@
 {
   "name": "bs-common-library",
   "description": "All common tools, utils and etc. for Biswap products",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "main": "./core/index.js",
   "types": "./core/index.d.ts",

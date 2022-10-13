@@ -63,15 +63,85 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blockchainService = exports.BlockchainService = void 0;
+var abi_1 = require("@ethersproject/abi");
 var _helpers_1 = require("../helpers");
 var _configs_1 = require("../configs");
-var api_service_1 = require("./api.service");
+var _services_1 = require("./");
+var _constants_1 = require("../constants");
 var bignumber_js_1 = __importDefault(require("bignumber.js"));
+var web3_1 = __importDefault(require("web3"));
 var tokens = __importStar(require("../constants/tokens"));
 bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
+/**
+ * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
+ */
 var BlockchainService = /** @class */ (function () {
     function BlockchainService() {
     }
+    /**
+     * Web3 HTTP-provider
+     *
+     * @param {ChainId} chainId
+     * @return {Web3}
+     */
+    BlockchainService.prototype.getWeb3 = function (chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        if (this.web3) {
+            return this.web3;
+        }
+        var provider = new web3_1.default.providers.HttpProvider(_configs_1.web3Config[chainId].httpHosts[0], { timeout: 6000 });
+        return new web3_1.default(provider);
+    };
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {AbiItem[]|string} abi
+     * @param {string} address
+     * @return {Contract}
+     */
+    BlockchainService.prototype.getContract = function (abi, address) {
+        var web3 = this.getWeb3();
+        var jsonInterface = (typeof abi === 'string') ? JSON.parse(abi) : abi;
+        return new web3.eth.Contract(jsonInterface, address);
+    };
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} name - Name of contract in DB
+     * @return {Contract}
+     */
+    BlockchainService.prototype.getContractByName = function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var contract;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(name, "/name"))];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, this.getContract(contract['abi'], contract['address'])];
+                }
+            });
+        });
+    };
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} address - Address of contract in DB
+     * @return {Contract}
+     */
+    BlockchainService.prototype.getContractByAddress = function (address) {
+        return __awaiter(this, void 0, void 0, function () {
+            var contract;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(address.toLowerCase(), "/address"))];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, this.getContract(contract['abi'], contract['address'])];
+                }
+            });
+        });
+    };
     /**
      * Exchange liquidity provider token to USD
      *
@@ -127,7 +197,7 @@ var BlockchainService = /** @class */ (function () {
                         coreToken = tokenFrom;
                         coreTokenAmount = amount;
                         return [3 /*break*/, 3];
-                    case 1: return [4 /*yield*/, api_service_1.apiService.post('pool/exchange-pair', {
+                    case 1: return [4 /*yield*/, _services_1.requestService.post('pool/exchange-pair', {
                             tokenFrom: tokenFrom,
                             coreTokens: coreTokens
                         })];
@@ -146,7 +216,7 @@ var BlockchainService = /** @class */ (function () {
                             return [2 /*return*/, coreTokenAmount.toString(10)];
                         }
                         corePairTokens = [coreToken, coreTokens.USDT].sort();
-                        return [4 /*yield*/, api_service_1.apiService.get('pool/core-pair', {
+                        return [4 /*yield*/, _services_1.requestService.get('pool/core-pair', {
                                 tokenA: corePairTokens[0],
                                 tokenB: corePairTokens[1],
                             })];
@@ -161,6 +231,102 @@ var BlockchainService = /** @class */ (function () {
                             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
                             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
                         return [2 /*return*/, usdtAmount.toString(10)];
+                }
+            });
+        });
+    };
+    BlockchainService.prototype.multiCall = function (ABI, calls, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var callableAbi, callData, multicall, multiCallContract, returnData, e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        callableAbi = new abi_1.Interface(ABI);
+                        callData = calls.map(function (call) { return [
+                            call.address.toLowerCase(),
+                            callableAbi.encodeFunctionData(call.name, call.params),
+                        ]; });
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, _services_1.requestService.get('contracts/multicall/name')];
+                    case 2:
+                        multicall = _a.sent();
+                        multiCallContract = this.getContract(multicall['abi'], multicall['address']);
+                        return [4 /*yield*/, multiCallContract.methods
+                                .aggregate(callData)
+                                .call()];
+                    case 3:
+                        returnData = (_a.sent()).returnData;
+                        return [2 /*return*/, returnData.map(function (call, i) { return callableAbi.decodeFunctionResult(calls[i].name, call); })];
+                    case 4:
+                        e_1 = _a.sent();
+                        _services_1.logService.error('Cannot execute multi call. ' + e_1.message);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * List of launchpool addresses
+     */
+    BlockchainService.prototype.getPoolAddresses = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var farm, masterChefContract, poolsCount, calls, poolIndex, pools;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, _services_1.requestService.get('contracts/farm/name')];
+                    case 1:
+                        farm = _a.sent();
+                        masterChefContract = this.getContract(farm['abi'], farm['address']);
+                        return [4 /*yield*/, masterChefContract.methods.poolLength().call()];
+                    case 2:
+                        poolsCount = _a.sent();
+                        calls = [];
+                        // skip BSW at 0 position
+                        for (poolIndex = 1; poolIndex < poolsCount; poolIndex++) {
+                            calls.push({
+                                address: farm['address'],
+                                name: 'poolInfo',
+                                params: [poolIndex]
+                            });
+                        }
+                        return [4 /*yield*/, this.multiCall(farm['abi'], calls)];
+                    case 3:
+                        pools = _a.sent();
+                        return [2 /*return*/, pools.filter(function (pool) { return !pool.allocPoint.isZero(); }).map(function (pool) { return pool.lpToken.toLowerCase(); })];
+                }
+            });
+        });
+    };
+    /**
+     * Generate pair address from tokens addresses
+     *
+     * @param {string} tokenA - Address of token A
+     * @param {string} tokenB - Address of token B
+     */
+    BlockchainService.prototype.getPairAddress = function (tokenA, tokenB) {
+        return __awaiter(this, void 0, void 0, function () {
+            var web3, _a, token0, token1, abiEncoded1, salt, factory, abiEncoded2;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        web3 = this.getWeb3();
+                        _a = tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA], token0 = _a[0], token1 = _a[1];
+                        abiEncoded1 = web3.eth.abi.encodeParameters(['address', 'address'], [token0, token1])
+                            .split('0'.repeat(24))
+                            .join('');
+                        salt = web3.utils.soliditySha3(abiEncoded1);
+                        return [4 /*yield*/, _services_1.requestService.get('contracts/factory/name')];
+                    case 1:
+                        factory = _b.sent();
+                        abiEncoded2 = web3.eth.abi.encodeParameters(['address', 'bytes32'], [factory['address'], salt])
+                            .split('0'.repeat(24))
+                            .join('')
+                            .substring(2);
+                        return [2 /*return*/, '0x' + web3_1.default.utils.soliditySha3('0xff' + abiEncoded2, _constants_1.INIT_HASH).substring(26)];
                 }
             });
         });
@@ -190,7 +356,7 @@ var BlockchainService = /** @class */ (function () {
      * @param {string} address
      * @param {number} chainId
      */
-    BlockchainService.prototype.getSymbolByAddress = function (address, chainId) {
+    BlockchainService.prototype.getTokenSymbolByAddress = function (address, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         for (var key in tokens) {
             if (!tokens[key] || !tokens[key][chainId])
@@ -207,7 +373,7 @@ var BlockchainService = /** @class */ (function () {
      * @param {string} symbol
      * @param {number} chainId
      */
-    BlockchainService.prototype.getAddressBySymbol = function (symbol, chainId) {
+    BlockchainService.prototype.getTokenAddressBySymbol = function (symbol, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         for (var key in tokens) {
             if (!tokens[key] || !tokens[key][chainId])
