@@ -1,2 +1,2 @@
 export * from './api.config';
-export * from './network.config';
+export * from './blockchain.config';

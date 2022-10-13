@@ -21,7 +21,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@abi/*": [ "./src/abi/*" ],
       "@configs": [ "./src/configs" ],
       "@configs/*": [ "./src/configs/*" ],
       "@constants": [ "./src/constants" ],
@@ -33,6 +32,7 @@
       "@types": [ "./src/types" ],
       "@types/*": [ "./src/types/*" ],
       "@services": [ "./src/services" ],
+      "@services/*": [ "./src/services/*" ],
       "@src/*": [ "./src/*" ],
     },
   },

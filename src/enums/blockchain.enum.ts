@@ -8,3 +8,9 @@ export enum ChainId {
     POLYGON = 137, // matic
     POLYGON_TESTNET = 80001
 }
+
+export enum ContractType {
+    Common = 'common', // abi (pair, erc20 etc)
+    Single = 'single', // abi + address
+    DoublePool = 'double-pool', // abi + address + stake token
+}

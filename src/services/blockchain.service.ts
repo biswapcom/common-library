@@ -1,14 +1,77 @@
+import { AbiItem } from "web3-utils";
+import { MulticallCall, Pair } from "@types";
+import { Interface } from '@ethersproject/abi';
+import { Contract } from "web3-eth-contract";
 import { toBN } from "@helpers";
-import { Pair } from "@types";
 import { ChainId } from "@enums";
-import { defaultChainId } from "@configs";
-import { apiService } from "@src/services/api.service";
+import { defaultChainId, web3Config } from "@configs";
+import { logService, requestService as request } from "@services";
+import { INIT_HASH } from "@constants";
 import BN from "bignumber.js";
+import Web3 from "web3";
 import * as tokens from "@constants/tokens";
 
 BN.config({ EXPONENTIAL_AT: 1000000000 });
 
+/**
+ * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
+ */
 export class BlockchainService {
+    private web3: Web3;
+
+    /**
+     * Web3 HTTP-provider
+     *
+     * @param {ChainId} chainId
+     * @return {Web3}
+     */
+    getWeb3(chainId: ChainId = defaultChainId): Web3 {
+        if (this.web3) {
+            return this.web3;
+        }
+
+        const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], { timeout: 6000 })
+
+        return new Web3(provider);
+    }
+
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {AbiItem[]|string} abi
+     * @param {string} address
+     * @return {Contract}
+     */
+    getContract(abi: AbiItem[] | string, address: string): Contract {
+        const web3 = this.getWeb3();
+        const jsonInterface = (typeof abi === 'string') ? JSON.parse(abi) : abi;
+
+        return new web3.eth.Contract(jsonInterface, address);
+    }
+
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} name - Name of contract in DB
+     * @return {Contract}
+     */
+    async getContractByName(name: string): Promise<Contract> {
+        const contract = await request.get(`contracts/${name}/name`);
+
+        return this.getContract(contract['abi'], contract['address']);
+    }
+
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} address - Address of contract in DB
+     * @return {Contract}
+     */
+    async getContractByAddress(address: string): Promise<Contract> {
+        const contract = await request.get(`contracts/${address.toLowerCase()}/address`);
+
+        return this.getContract(contract['abi'], contract['address']);
+    }
 
     /**
      * Exchange liquidity provider token to USD
@@ -55,7 +118,7 @@ export class BlockchainService {
             coreToken = tokenFrom;
             coreTokenAmount = amount;
         } else {
-            const exchangePair = await apiService.post('pool/exchange-pair', {
+            const exchangePair = await request.post('pool/exchange-pair', {
                 tokenFrom,
                 coreTokens
             });
@@ -77,7 +140,7 @@ export class BlockchainService {
         }
 
         const corePairTokens = [ coreToken, coreTokens.USDT ].sort();
-        const corePairResponse = await apiService.get('pool/core-pair', {
+        const corePairResponse = await request.get('pool/core-pair', {
             tokenA: corePairTokens[0],
             tokenB: corePairTokens[1],
         });
@@ -95,6 +158,75 @@ export class BlockchainService {
             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
 
         return usdtAmount.toString(10);
+    }
+
+    async multiCall(ABI, calls: MulticallCall[], chainId: ChainId = defaultChainId) {
+        const callableAbi = new Interface(ABI);
+
+        const callData = calls.map((call: MulticallCall) => [
+            call.address.toLowerCase(),
+            callableAbi.encodeFunctionData(call.name, call.params),
+        ]);
+
+        try {
+            const multicall = await request.get('contracts/multicall/name');
+            const multiCallContract = this.getContract(multicall['abi'], multicall['address']);
+            const { returnData } = await multiCallContract.methods
+                .aggregate(callData)
+                .call();
+
+            return returnData.map((call, i) => callableAbi.decodeFunctionResult(calls[i].name, call));
+        } catch (e) {
+            logService.error('Cannot execute multi call. ' + (e as Error).message);
+        }
+    }
+
+    /**
+     * List of launchpool addresses
+     */
+    async getPoolAddresses(): Promise<string[]> {
+        const farm = await request.get('contracts/farm/name');
+        const masterChefContract = this.getContract(farm['abi'], farm['address']);
+        const poolsCount = await masterChefContract.methods.poolLength().call();
+        const calls: MulticallCall[] = [];
+
+        // skip BSW at 0 position
+        for (let poolIndex = 1; poolIndex < poolsCount; poolIndex++) {
+            calls.push({
+                address: farm['address'],
+                name: 'poolInfo',
+                params: [ poolIndex ]
+            });
+        }
+
+        const pools = await this.multiCall(farm['abi'], calls);
+
+        return pools.filter(pool => !pool.allocPoint.isZero()).map(pool => pool.lpToken.toLowerCase());
+    }
+
+    /**
+     * Generate pair address from tokens addresses
+     *
+     * @param {string} tokenA - Address of token A
+     * @param {string} tokenB - Address of token B
+     */
+    async getPairAddress(tokenA: string, tokenB: string): Promise<string> {
+        const web3 = this.getWeb3();
+        const [ token0, token1 ] = tokenA < tokenB ? [ tokenA, tokenB ] : [ tokenB, tokenA ];
+
+        const abiEncoded1 = web3.eth.abi.encodeParameters([ 'address', 'address' ], [ token0, token1 ])
+            .split('0'.repeat(24))
+            .join('');
+
+        const salt = web3.utils.soliditySha3(abiEncoded1);
+        const factory = await request.get('contracts/factory/name');
+
+        const abiEncoded2 = web3.eth.abi.encodeParameters([ 'address', 'bytes32' ], [ factory['address'], salt ])
+            .split('0'.repeat(24))
+            .join('')
+            .substring(2);
+
+        return '0x' + Web3.utils.soliditySha3('0xff' + abiEncoded2, INIT_HASH).substring(26);
     }
 
     /**
@@ -125,7 +257,7 @@ export class BlockchainService {
      * @param {string} address
      * @param {number} chainId
      */
-    getSymbolByAddress(address: string, chainId: ChainId = defaultChainId): string {
+    getTokenSymbolByAddress(address: string, chainId: ChainId = defaultChainId): string {
         for (let key in tokens) {
             if (!tokens[key] || !tokens[key][chainId]) continue;
 
@@ -143,7 +275,7 @@ export class BlockchainService {
      * @param {string} symbol
      * @param {number} chainId
      */
-    getAddressBySymbol(symbol: string, chainId: ChainId = defaultChainId): string {
+    getTokenAddressBySymbol(symbol: string, chainId: ChainId = defaultChainId): string {
         for (let key in tokens) {
             if (!tokens[key] || !tokens[key][chainId]) continue;
 

@@ -3,7 +3,7 @@ import { bsUri } from "@configs";
 
 const uri = `${bsUri}/back`;
 
-export class ApiService {
+export class RequestService {
 
     async post(path: string, body = {}) {
         const response = await fetch(`${uri}/${path}`, {
@@ -38,4 +38,4 @@ export class ApiService {
     }
 }
 
-export const apiService = new ApiService();
+export const requestService = new RequestService();
