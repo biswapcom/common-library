@@ -43,7 +43,7 @@ export class BlockchainService {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    getContract(abi: AbiItem[] | string, address: string, chainId: ChainId = defaultChainId): Contract {
+    getEthContract(abi: AbiItem[] | string, address: string, chainId: ChainId = defaultChainId): Contract {
         const web3 = this.getWeb3(chainId);
         const jsonInterface = (typeof abi === 'string') ? JSON.parse(abi) : abi;
 
@@ -57,10 +57,10 @@ export class BlockchainService {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    async getContractByName(name: string, chainId: ChainId = defaultChainId): Promise<Contract> {
+    async getEthContractByName(name: string, chainId: ChainId = defaultChainId): Promise<Contract> {
         const contract = await request.get(`contracts/${name}/name`, { chainId });
 
-        return this.getContract(contract['abi'], contract['address']);
+        return this.getEthContract(contract['abi'], contract['address']);
     }
 
     /**
@@ -70,10 +70,10 @@ export class BlockchainService {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    async getContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<Contract> {
+    async getEthContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<Contract> {
         const contract = await request.get(`contracts/${address.toLowerCase()}/address`, { chainId });
 
-        return this.getContract(contract['abi'], contract['address']);
+        return this.getEthContract(contract['abi'], contract['address']);
     }
 
     /**
@@ -175,7 +175,7 @@ export class BlockchainService {
 
         try {
             const multicall = await request.get('contracts/multicall/name', { chainId });
-            const multiCallContract = this.getContract(multicall['abi'], multicall['address'], chainId);
+            const multiCallContract = this.getEthContract(multicall['abi'], multicall['address'], chainId);
             const { returnData } = await multiCallContract.methods
                 .aggregate(callData)
                 .call();
@@ -194,7 +194,7 @@ export class BlockchainService {
      */
     async getPoolAddresses(chainId: ChainId = defaultChainId): Promise<string[]> {
         const farm = await request.get('contracts/farm/name', { chainId });
-        const masterChefContract = this.getContract(farm['abi'], farm['address']);
+        const masterChefContract = this.getEthContract(farm['abi'], farm['address']);
         const poolsCount = await masterChefContract.methods.poolLength().call();
         const calls: MulticallCall[] = [];
 

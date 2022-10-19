@@ -23,7 +23,7 @@ export declare class BlockchainService {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    getContract(abi: AbiItem[] | string, address: string, chainId?: ChainId): Contract;
+    getEthContract(abi: AbiItem[] | string, address: string, chainId?: ChainId): Contract;
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *
@@ -31,7 +31,7 @@ export declare class BlockchainService {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    getContractByName(name: string, chainId?: ChainId): Promise<Contract>;
+    getEthContractByName(name: string, chainId?: ChainId): Promise<Contract>;
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *
@@ -39,7 +39,7 @@ export declare class BlockchainService {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    getContractByAddress(address: string, chainId?: ChainId): Promise<Contract>;
+    getEthContractByAddress(address: string, chainId?: ChainId): Promise<Contract>;
     /**
      * Exchange liquidity provider token to USD
      *

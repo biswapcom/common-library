@@ -100,7 +100,7 @@ var BlockchainService = /** @class */ (function () {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    BlockchainService.prototype.getContract = function (abi, address, chainId) {
+    BlockchainService.prototype.getEthContract = function (abi, address, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         var web3 = this.getWeb3(chainId);
         var jsonInterface = (typeof abi === 'string') ? JSON.parse(abi) : abi;
@@ -113,7 +113,7 @@ var BlockchainService = /** @class */ (function () {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    BlockchainService.prototype.getContractByName = function (name, chainId) {
+    BlockchainService.prototype.getEthContractByName = function (name, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
             var contract;
@@ -122,7 +122,7 @@ var BlockchainService = /** @class */ (function () {
                     case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(name, "/name"), { chainId: chainId })];
                     case 1:
                         contract = _a.sent();
-                        return [2 /*return*/, this.getContract(contract['abi'], contract['address'])];
+                        return [2 /*return*/, this.getEthContract(contract['abi'], contract['address'])];
                 }
             });
         });
@@ -134,7 +134,7 @@ var BlockchainService = /** @class */ (function () {
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {Contract}
      */
-    BlockchainService.prototype.getContractByAddress = function (address, chainId) {
+    BlockchainService.prototype.getEthContractByAddress = function (address, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
             var contract;
@@ -143,7 +143,7 @@ var BlockchainService = /** @class */ (function () {
                     case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(address.toLowerCase(), "/address"), { chainId: chainId })];
                     case 1:
                         contract = _a.sent();
-                        return [2 /*return*/, this.getContract(contract['abi'], contract['address'])];
+                        return [2 /*return*/, this.getEthContract(contract['abi'], contract['address'])];
                 }
             });
         });
@@ -261,7 +261,7 @@ var BlockchainService = /** @class */ (function () {
                         return [4 /*yield*/, _services_1.requestService.get('contracts/multicall/name', { chainId: chainId })];
                     case 2:
                         multicall = _a.sent();
-                        multiCallContract = this.getContract(multicall['abi'], multicall['address'], chainId);
+                        multiCallContract = this.getEthContract(multicall['abi'], multicall['address'], chainId);
                         return [4 /*yield*/, multiCallContract.methods
                                 .aggregate(callData)
                                 .call()];
@@ -292,7 +292,7 @@ var BlockchainService = /** @class */ (function () {
                     case 0: return [4 /*yield*/, _services_1.requestService.get('contracts/farm/name', { chainId: chainId })];
                     case 1:
                         farm = _a.sent();
-                        masterChefContract = this.getContract(farm['abi'], farm['address']);
+                        masterChefContract = this.getEthContract(farm['abi'], farm['address']);
                         return [4 /*yield*/, masterChefContract.methods.poolLength().call()];
                     case 2:
                         poolsCount = _a.sent();
