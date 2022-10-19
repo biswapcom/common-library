@@ -19,7 +19,7 @@ var moment_1 = __importDefault(require("moment"));
 var _enums_1 = require("../enums");
 var colors = require('colors');
 colors.setTheme({
-    notice: 'white',
+    notice: 'gray',
     info: 'white',
     success: 'green',
     warn: 'yellow',
@@ -34,9 +34,84 @@ var LogService = /** @class */ (function () {
     function LogService() {
         this.defaultOptions = {
             newline: 0,
-            bold: false
+            break: 0,
+            bold: false,
+            underline: false
         };
     }
+    /**
+     * Important information that should be logged under normal conditions
+     *
+     * @param {string} message
+     * @param {LoggerOptions} options
+     */
+    LogService.prototype.info = function (message, options) {
+        if (options === void 0) { options = {}; }
+        this.log(_enums_1.LogLevel.Info, message, options);
+    };
+    /**
+     * Additional information that should be logged under normal conditions
+     *
+     * @param {string} message
+     * @param {LoggerOptions} options
+     */
+    LogService.prototype.notice = function (message, options) {
+        if (options === void 0) { options = {}; }
+        this.log(_enums_1.LogLevel.Notice, message, options);
+    };
+    /**
+     * Information that should be logged after successful operation
+     *
+     * @param {string} message
+     * @param {LoggerOptions} options
+     */
+    LogService.prototype.success = function (message, options) {
+        if (options === void 0) { options = {}; }
+        this.log(_enums_1.LogLevel.Success, message, options);
+    };
+    /**
+     * This MIGHT be problem, or might not
+     *
+     * @param {string} message
+     * @param {LoggerOptions} options
+     */
+    LogService.prototype.warn = function (message, options) {
+        if (options === void 0) { options = {}; }
+        this.log(_enums_1.LogLevel.Warn, message, options);
+    };
+    /**
+     * Definitely a problem that should be investigated
+     *
+     * @param {string} message
+     * @param {LoggerOptions} options
+     */
+    LogService.prototype.error = function (message, options) {
+        if (options === void 0) { options = {}; }
+        this.log(_enums_1.LogLevel.Error, message, options);
+    };
+    /**
+     * @param {string} message
+     * @param {LoggerOptions} options
+     */
+    LogService.prototype.debug = function (message, options) {
+        if (options === void 0) { options = {}; }
+        this.log(_enums_1.LogLevel.Debug, message, options);
+    };
+    /**
+     * Output each message from the array in new line
+     *
+     * @param {Array<string>} messages
+     * @param {LoggerOptions} options
+     * @param {string} level
+     */
+    LogService.prototype.list = function (messages, options, level) {
+        if (options === void 0) { options = {}; }
+        if (level === void 0) { level = _enums_1.LogLevel.Info; }
+        for (var _i = 0, messages_1 = messages; _i < messages_1.length; _i++) {
+            var message = messages_1[_i];
+            this.log(level, message, options);
+        }
+    };
     LogService.prototype.log = function (level, message, options) {
         if (options === void 0) { options = {}; }
         var opts = __assign(__assign({}, this.defaultOptions), options);
@@ -71,35 +146,11 @@ var LogService = /** @class */ (function () {
         if (opts.newline > 0) {
             console.log('\n'.repeat(opts.newline));
         }
-        // output log
+        // output message
         console.log(this.time, message);
         if (opts.break > 0) {
             console.log('\n'.repeat(opts.break));
         }
-    };
-    LogService.prototype.notice = function (message, opt) {
-        if (opt === void 0) { opt = {}; }
-        this.log(_enums_1.LogLevel.Notice, message, opt);
-    };
-    LogService.prototype.success = function (message, opt) {
-        if (opt === void 0) { opt = {}; }
-        this.log(_enums_1.LogLevel.Success, message, opt);
-    };
-    LogService.prototype.info = function (message, opt) {
-        if (opt === void 0) { opt = {}; }
-        this.log(_enums_1.LogLevel.Info, message, opt);
-    };
-    LogService.prototype.warn = function (message, opt) {
-        if (opt === void 0) { opt = {}; }
-        this.log(_enums_1.LogLevel.Warn, message, opt);
-    };
-    LogService.prototype.error = function (message, opt) {
-        if (opt === void 0) { opt = {}; }
-        this.log(_enums_1.LogLevel.Error, message, opt);
-    };
-    LogService.prototype.debug = function (message, opt) {
-        if (opt === void 0) { opt = {}; }
-        this.log(_enums_1.LogLevel.Debug, message, opt);
     };
     Object.defineProperty(LogService.prototype, "time", {
         get: function () {
