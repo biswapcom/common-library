@@ -8,7 +8,6 @@ export declare enum BalanceType {
     Pool = "pool",
     Competition = "competition",
     FeeReturn = "fee-return",
-    Lottery = "lottery",
     Squid = "squid",
     DivPool = "div-pool"
 }

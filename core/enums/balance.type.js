@@ -13,7 +13,6 @@ var BalanceType;
     BalanceType["Pool"] = "pool";
     BalanceType["Competition"] = "competition";
     BalanceType["FeeReturn"] = "fee-return";
-    BalanceType["Lottery"] = "lottery";
     BalanceType["Squid"] = "squid";
     BalanceType["DivPool"] = "div-pool";
 })(BalanceType = exports.BalanceType || (exports.BalanceType = {}));
