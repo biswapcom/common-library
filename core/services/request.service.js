@@ -41,7 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requestService = exports.RequestService = void 0;
 var node_fetch_1 = __importDefault(require("node-fetch"));
-var _configs_1 = require("../configs");
+var _configs_1 = require("@configs");
 var uri = "".concat(_configs_1.bsUri, "/back");
 var RequestService = /** @class */ (function () {
     function RequestService() {

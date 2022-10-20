@@ -2,7 +2,7 @@
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WBNB = exports.USDC = exports.LTC = exports.USDT = exports.EXOS = exports.ETH = exports.DAI = exports.BUSD = exports.BTCB = exports.BSW = exports.BANANA = exports.BABY = exports.BFG = exports.CAKE = void 0;
-var _enums_1 = require("../enums");
+var _enums_1 = require("@enums");
 exports.CAKE = (_a = {},
     _a[_enums_1.ChainId.BSC] = {
         address: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
