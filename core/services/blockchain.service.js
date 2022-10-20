@@ -90,8 +90,8 @@ var BlockchainService = /** @class */ (function () {
             return this.web3;
         }
         var provider = new web3_1.default.providers.HttpProvider(_configs_1.web3Config[chainId].httpHosts[0], { timeout: 6000 });
-        var web3 = new web3_1.default(provider);
-        web3.utils.hexToNumber = function (v) {
+        this.web3 = new web3_1.default(provider);
+        this.web3.utils.hexToNumber = function (v) {
             try {
                 return (0, _helpers_1.toBN)(v).toNumber();
             }
@@ -99,7 +99,7 @@ var BlockchainService = /** @class */ (function () {
                 return 0;
             }
         };
-        return web3;
+        return this.web3;
     };
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
