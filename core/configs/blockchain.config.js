@@ -2,7 +2,7 @@
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultChainId = exports.web3Config = void 0;
-var _enums_1 = require("@enums");
+var _enums_1 = require("../enums");
 exports.web3Config = (_a = {},
     _a[_enums_1.ChainId.BSC] = {
         httpHosts: [

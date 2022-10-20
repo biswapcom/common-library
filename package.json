@@ -29,16 +29,19 @@
   },
   "homepage": "https://github.com/biswapcom/common-library#readme",
   "dependencies": {
-    "bignumber.js": "^9.1.0",
-    "colors": "^1.4.0",
-    "dotenv": "^16.0.2",
-    "ethers-contracts": "^2.2.1",
+    "bignumber.js": "9.1.0",
+    "colors": "1.4.0",
+    "dotenv": "16.0.3",
+    "ethers-contracts": "2.2.1",
     "ethers-typescript-typings": "0.0.4",
-    "moment": "^2.29.4",
+    "jsbi": "4.3.0",
+    "moment": "2.29.4",
     "node-fetch": "^2.6.7",
     "tsconfig-replace-paths": "0.0.11",
-    "web3": "1.7.0",
-    "web3-utils": "^1.8.0"
+    "uuid": "9.0.0",
+    "underscore": "1.12.1",
+    "web3": "1.8.0",
+    "web3-utils": "1.8.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.14",

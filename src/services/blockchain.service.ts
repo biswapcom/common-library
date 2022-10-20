@@ -31,8 +31,17 @@ export class BlockchainService {
         }
 
         const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], { timeout: 6000 })
+        const web3 =  new Web3(provider);
 
-        return new Web3(provider);
+        web3.utils.hexToNumber = (v) => {
+            try {
+                return toBN(v).toNumber();
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        return web3;
     }
 
     /**

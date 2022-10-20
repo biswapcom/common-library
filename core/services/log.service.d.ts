@@ -1,5 +1,5 @@
-import { LogLevel } from "@enums";
-import { LoggerOptions } from "@types";
+import { LogLevel } from "../enums";
+import { LoggerOptions } from "../types";
 export declare class LogService {
     private readonly defaultOptions;
     /**

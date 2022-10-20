@@ -1,4 +1,4 @@
-import { BalanceAction, BalanceType, ProjectName } from "@enums";
+import { BalanceAction, BalanceType, ProjectName } from "../enums";
 export interface BalanceMessage {
     userId: string;
     type: BalanceType;
