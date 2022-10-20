@@ -1,7 +1,7 @@
 import { AbiItem } from "web3-utils";
-import { MulticallCall, Pair } from "../types";
+import { MulticallCall, Pair } from "@types";
 import { Contract } from "web3-eth-contract";
-import { ChainId } from "../enums";
+import { ChainId } from "@enums";
 import Web3 from "web3";
 /**
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain

@@ -64,13 +64,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blockchainService = exports.BlockchainService = void 0;
 var abi_1 = require("@ethersproject/abi");
-var _helpers_1 = require("../helpers");
-var _configs_1 = require("../configs");
-var _services_1 = require("./");
-var _constants_1 = require("../constants");
+var _helpers_1 = require("@helpers");
+var _configs_1 = require("@configs");
+var _services_1 = require("@services");
+var _constants_1 = require("@constants");
 var bignumber_js_1 = __importDefault(require("bignumber.js"));
 var web3_1 = __importDefault(require("web3"));
-var tokens = __importStar(require("../constants/tokens"));
+var tokens = __importStar(require("@constants/tokens"));
 bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
 /**
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain

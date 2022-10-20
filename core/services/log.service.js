@@ -16,7 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logService = exports.LogService = void 0;
 var moment_1 = __importDefault(require("moment"));
-var _enums_1 = require("../enums");
+var _enums_1 = require("@enums");
 var colors = require('colors');
 colors.setTheme({
     notice: 'gray',

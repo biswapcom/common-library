@@ -6,7 +6,8 @@
   "main": "./core/index.js",
   "types": "./core/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./core && tsc && tsconfig-replace-paths -s ./src && npm pack"
+    "build": "rm -rf ./core && tsc && tsconfig-replace-paths -s ./src && npm pack",
+    "postinstall": "cp src/libs/web3-utils.js node_modules/web3-utils/lib/utils.js"
   },
   "files": [
     "core/**"
@@ -34,11 +35,10 @@
     "dotenv": "^16.0.2",
     "ethers-contracts": "^2.2.1",
     "ethers-typescript-typings": "0.0.4",
-    "jsbi": "^4.3.0",
     "moment": "^2.29.4",
     "node-fetch": "^2.6.7",
     "tsconfig-replace-paths": "0.0.11",
-    "web3": "^1.8.0",
+    "web3": "1.7.0",
     "web3-utils": "^1.8.0"
   },
   "devDependencies": {

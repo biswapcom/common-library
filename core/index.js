@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.types = exports.services = exports.enums = exports.constants = void 0;
-exports.constants = __importStar(require("./constants"));
-exports.enums = __importStar(require("./enums"));
-exports.services = __importStar(require("./services"));
-exports.types = __importStar(require("./types"));
+exports.constants = __importStar(require("@constants"));
+exports.enums = __importStar(require("@enums"));
+exports.services = __importStar(require("@services"));
+exports.types = __importStar(require("@types"));
