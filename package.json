@@ -6,8 +6,7 @@
   "main": "./core/index.js",
   "types": "./core/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./core && tsc && tsconfig-replace-paths -s ./src && npm pack",
-    "postinstall": "cp ./src/libs/web3-utils.js ./node_modules/web3-utils/lib/utils.js"
+    "build": "rm -rf ./core && tsc && tsconfig-replace-paths -s ./src && npm pack"
   },
   "files": [
     "core/**"
