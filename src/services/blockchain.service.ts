@@ -7,6 +7,7 @@ import { ChainId } from "@enums";
 import { defaultChainId, web3Config } from "@configs";
 import { logService, requestService as request } from "@services";
 import { INIT_CODE_HASH } from "@constants";
+import { Db } from "mongodb";
 import BN from "bignumber.js";
 import Web3 from "web3";
 import * as tokens from "@constants/tokens";
@@ -18,6 +19,7 @@ BN.config({ EXPONENTIAL_AT: 1000000000 });
  */
 export class BlockchainService {
     private web3: Web3;
+    private db: Db;
 
     /**
      * Web3 HTTP-provider
@@ -33,6 +35,7 @@ export class BlockchainService {
         const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], { timeout: 6000 })
         this.web3 = new Web3(provider);
 
+        // to avoid error "Number can only safely store up to 53 bits web3"
         this.web3.utils.hexToNumber = (v) => {
             try {
                 return toBN(v).toNumber();
@@ -130,13 +133,7 @@ export class BlockchainService {
             coreToken = tokenFrom;
             coreTokenAmount = amount;
         } else {
-            const exchangePair = await request.post('pool/exchange-pair', {
-                tokenFrom,
-                coreTokens,
-                chainId
-            });
-
-            const pair = exchangePair.data;
+            const pair = await this.getExchangePair(tokenFrom, chainId);
 
             if (!pair) {
                 return '0';
@@ -153,13 +150,7 @@ export class BlockchainService {
         }
 
         const corePairTokens = [ coreToken, coreTokens.USDT ].sort();
-        const corePairResponse = await request.get('pool/core-pair', {
-            tokenA: corePairTokens[0],
-            tokenB: corePairTokens[1],
-            chainId
-        });
-
-        const corePair = corePairResponse.data;
+        const corePair = await this.getCorePair(corePairTokens[0], corePairTokens[1], chainId);
 
         if (!corePair) {
             return '0';
@@ -172,6 +163,68 @@ export class BlockchainService {
             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
 
         return usdtAmount.toString(10);
+    }
+
+    private async getCorePair(tokenA: string, tokenB: string, chainId: number = defaultChainId): Promise<Pair | null> {
+        if (this.db) {
+            const corePair = await this.db.collection('pairs').findOne({
+                tokenA: tokenA.toLowerCase(),
+                tokenB: tokenB.toLowerCase(),
+                // chainId
+            });
+
+            if (corePair) {
+                return corePair as Pair;
+            }
+
+            return null;
+        }
+
+        const corePairResponse = await request.get('pool/core-pair', {
+            tokenA,
+            tokenB,
+            chainId
+        });
+
+        return corePairResponse.data;
+    }
+
+    private async getExchangePair(tokenFrom: string, chainId: number =defaultChainId) {
+        const coreTokens: string[] = Object.values(this.getCoreTokens(chainId));
+
+        if (this.db) {
+            const tokensQuery = {
+                // chainId,
+                $or: coreTokens.map(tokenAddress => {
+                    const tokens = [ tokenFrom.toLowerCase(), tokenAddress.toLowerCase() ].sort();
+
+                    return {
+                        tokenA: tokens[0],
+                        tokenB: tokens[1],
+                        swaps: { $gt: 50 },
+                    };
+                })
+            };
+
+            const [ pair ] = await this.db.collection('pairs').find(tokensQuery)
+                .sort({ swaps: -1 })
+                .limit(1)
+                .toArray()
+
+            if (pair) {
+                return pair;
+            }
+
+            return null;
+        }
+
+        const exchangePair = await request.post('pool/exchange-pair', {
+            tokenFrom,
+            coreTokens,
+            chainId
+        });
+
+        return exchangePair.data;
     }
 
     async multiCall(ABI, calls: MulticallCall[], chainId: ChainId = defaultChainId) {
@@ -303,6 +356,10 @@ export class BlockchainService {
         }
 
         throw Error(`Cannot find the token address by symbol "${symbol}"`);
+    }
+
+    setDb (db: Db) {
+        this.db = db;
     }
 
 }
