@@ -2,12 +2,14 @@ import { AbiItem } from "web3-utils";
 import { MulticallCall, Pair } from "../types";
 import { Contract } from "web3-eth-contract";
 import { ChainId } from "../enums";
+import { Db } from "mongodb";
 import Web3 from "web3";
 /**
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
  */
 export declare class BlockchainService {
     private web3;
+    private db;
     /**
      * Web3 HTTP-provider
      *
@@ -49,6 +51,8 @@ export declare class BlockchainService {
      */
     exchangeLPTokenToUSD(amountFrom: string, pair: Pair, chainId?: ChainId): Promise<string>;
     exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
+    private getCorePair;
+    private getExchangePair;
     multiCall(ABI: any, calls: MulticallCall[], chainId?: ChainId): Promise<any>;
     /**
      * List of launchpool addresses
@@ -87,5 +91,6 @@ export declare class BlockchainService {
      * @param {number} chainId
      */
     getTokenAddressBySymbol(symbol: string, chainId?: ChainId): string;
+    setDb(db: Db): void;
 }
 export declare const blockchainService: BlockchainService;

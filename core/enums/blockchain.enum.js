@@ -14,7 +14,7 @@ var ChainId;
 })(ChainId = exports.ChainId || (exports.ChainId = {}));
 var ContractType;
 (function (ContractType) {
-    ContractType["Common"] = "common";
+    ContractType["Default"] = "default";
     ContractType["Single"] = "single";
     ContractType["DoublePool"] = "double-pool";
 })(ContractType = exports.ContractType || (exports.ContractType = {}));

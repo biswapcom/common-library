@@ -9,7 +9,7 @@ export declare enum ChainId {
     POLYGON_TESTNET = 80001
 }
 export declare enum ContractType {
-    Common = "common",
+    Default = "default",
     Single = "single",
     DoublePool = "double-pool"
 }

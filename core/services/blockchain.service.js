@@ -91,6 +91,7 @@ var BlockchainService = /** @class */ (function () {
         }
         var provider = new web3_1.default.providers.HttpProvider(_configs_1.web3Config[chainId].httpHosts[0], { timeout: 6000 });
         this.web3 = new web3_1.default(provider);
+        // to avoid error "Number can only safely store up to 53 bits web3"
         this.web3.utils.hexToNumber = function (v) {
             try {
                 return (0, _helpers_1.toBN)(v).toNumber();
@@ -200,7 +201,7 @@ var BlockchainService = /** @class */ (function () {
     BlockchainService.prototype.exchangeTokenToUSDT = function (amountFrom, tokenFrom, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
-            var amount, coreTokens, reserveA, reserveB, coreTokenAmount, coreToken, exchangePair, pair, corePairTokens, corePairResponse, corePair, usdtAmount;
+            var amount, coreTokens, reserveA, reserveB, coreTokenAmount, coreToken, pair, corePairTokens, corePair, usdtAmount;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -212,14 +213,9 @@ var BlockchainService = /** @class */ (function () {
                         coreToken = tokenFrom;
                         coreTokenAmount = amount;
                         return [3 /*break*/, 3];
-                    case 1: return [4 /*yield*/, _services_1.requestService.post('pool/exchange-pair', {
-                            tokenFrom: tokenFrom,
-                            coreTokens: coreTokens,
-                            chainId: chainId
-                        })];
+                    case 1: return [4 /*yield*/, this.getExchangePair(tokenFrom, chainId)];
                     case 2:
-                        exchangePair = _c.sent();
-                        pair = exchangePair.data;
+                        pair = _c.sent();
                         if (!pair) {
                             return [2 /*return*/, '0'];
                         }
@@ -232,14 +228,9 @@ var BlockchainService = /** @class */ (function () {
                             return [2 /*return*/, coreTokenAmount.toString(10)];
                         }
                         corePairTokens = [coreToken, coreTokens.USDT].sort();
-                        return [4 /*yield*/, _services_1.requestService.get('pool/core-pair', {
-                                tokenA: corePairTokens[0],
-                                tokenB: corePairTokens[1],
-                                chainId: chainId
-                            })];
+                        return [4 /*yield*/, this.getCorePair(corePairTokens[0], corePairTokens[1], chainId)];
                     case 4:
-                        corePairResponse = _c.sent();
-                        corePair = corePairResponse.data;
+                        corePair = _c.sent();
                         if (!corePair) {
                             return [2 /*return*/, '0'];
                         }
@@ -248,6 +239,79 @@ var BlockchainService = /** @class */ (function () {
                             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
                             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
                         return [2 /*return*/, usdtAmount.toString(10)];
+                }
+            });
+        });
+    };
+    BlockchainService.prototype.getCorePair = function (tokenA, tokenB, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var corePair, corePairResponse;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this.db) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.db.collection('pairs').findOne({
+                                tokenA: tokenA.toLowerCase(),
+                                tokenB: tokenB.toLowerCase(),
+                                // chainId
+                            })];
+                    case 1:
+                        corePair = _a.sent();
+                        if (corePair) {
+                            return [2 /*return*/, corePair];
+                        }
+                        return [2 /*return*/, null];
+                    case 2: return [4 /*yield*/, _services_1.requestService.get('pool/core-pair', {
+                            tokenA: tokenA,
+                            tokenB: tokenB,
+                            chainId: chainId
+                        })];
+                    case 3:
+                        corePairResponse = _a.sent();
+                        return [2 /*return*/, corePairResponse.data];
+                }
+            });
+        });
+    };
+    BlockchainService.prototype.getExchangePair = function (tokenFrom, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var coreTokens, tokensQuery, pair, exchangePair;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        coreTokens = Object.values(this.getCoreTokens(chainId));
+                        if (!this.db) return [3 /*break*/, 2];
+                        tokensQuery = {
+                            // chainId,
+                            $or: coreTokens.map(function (tokenAddress) {
+                                var tokens = [tokenFrom.toLowerCase(), tokenAddress.toLowerCase()].sort();
+                                return {
+                                    tokenA: tokens[0],
+                                    tokenB: tokens[1],
+                                    swaps: { $gt: 50 },
+                                };
+                            })
+                        };
+                        return [4 /*yield*/, this.db.collection('pairs').find(tokensQuery)
+                                .sort({ swaps: -1 })
+                                .limit(1)
+                                .toArray()];
+                    case 1:
+                        pair = (_a.sent())[0];
+                        if (pair) {
+                            return [2 /*return*/, pair];
+                        }
+                        return [2 /*return*/, null];
+                    case 2: return [4 /*yield*/, _services_1.requestService.post('pool/exchange-pair', {
+                            tokenFrom: tokenFrom,
+                            coreTokens: coreTokens,
+                            chainId: chainId
+                        })];
+                    case 3:
+                        exchangePair = _a.sent();
+                        return [2 /*return*/, exchangePair.data];
                 }
             });
         });
@@ -406,6 +470,9 @@ var BlockchainService = /** @class */ (function () {
             }
         }
         throw Error("Cannot find the token address by symbol \"".concat(symbol, "\""));
+    };
+    BlockchainService.prototype.setDb = function (db) {
+        this.db = db;
     };
     return BlockchainService;
 }());

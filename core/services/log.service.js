@@ -144,12 +144,12 @@ var LogService = /** @class */ (function () {
             message = colors.underline(message);
         }
         if (opts.newline > 0) {
-            console.log('\n'.repeat(opts.newline));
+            console.log('\n'.repeat(opts.newline - 1));
         }
         // output message
         console.log(this.time, message);
         if (opts.break > 0) {
-            console.log('\n'.repeat(opts.break));
+            console.log('\n'.repeat(opts.break - 1));
         }
     };
     Object.defineProperty(LogService.prototype, "time", {

@@ -1,4 +1,6 @@
+import { ObjectId } from "mongodb";
 export declare type Pair = {
+    _id?: ObjectId;
     /**
      * Reserves of token tokenA used to price trades and distribute liquidity
      */
