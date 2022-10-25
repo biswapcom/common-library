@@ -1,5 +1,5 @@
 import { AbiItem } from "web3-utils";
-import { MulticallCall, Pair } from "../types";
+import { ContractDb, MulticallCall, Pair } from "../types";
 import { Contract } from "web3-eth-contract";
 import { ChainId } from "../enums";
 import { Db } from "mongodb";
@@ -34,6 +34,14 @@ export declare class BlockchainService {
      * @return {Contract}
      */
     getEthContractByName(name: string, chainId?: ChainId): Promise<Contract>;
+    /**
+     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     *
+     * @param {string} name - Name of contract in DB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     * @return {ContractDb}
+     */
+    getContractByName(name: string, chainId?: ChainId): Promise<ContractDb>;
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *

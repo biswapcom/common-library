@@ -33,3 +33,14 @@ export type MulticallCall = {
      */
     params: any[]
 }
+
+export type ContractDb = {
+    chainId: number;
+    name: string;
+    type: string;
+    address: string;
+    isAffected: boolean;
+    abi: string;
+    description: string;
+    token: string;
+}
