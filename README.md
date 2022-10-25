@@ -3,6 +3,9 @@
 ### Prerequisites
 - Node v14 and above
 
+### Environment variables
+Variables **must be specified** in the project where Common library is used
+
 Services:
 1. API
 2. Blockchain
