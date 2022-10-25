@@ -1,1 +1,1 @@
-export declare const bsUri: string;
+export declare const bsBackendUri: string;

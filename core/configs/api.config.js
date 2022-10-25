@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bsUri = void 0;
+exports.bsBackendUri = void 0;
 var dotenv = __importStar(require("dotenv"));
 dotenv.config();
-exports.bsUri = process.env.BS_URI || 'http://localhost:3045';
+exports.bsBackendUri = process.env.BS_BACKEND_URI || 'http://localhost:3045';

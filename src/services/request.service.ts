@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
-import { bsUri } from "@configs";
+import { bsBackendUri } from "@configs";
 
-const uri = `${bsUri}/back`;
+const uri = `${bsBackendUri}/back`;
 
 export class RequestService {
 
