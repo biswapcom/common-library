@@ -11,7 +11,7 @@
     "typeRoots": [
       "./node_modules/@types"
     ],
-    "allowJs": false,
+    "allowJs": true,
     "sourceMap": false,
     "outDir": "./core",
     "rootDir": "./src",

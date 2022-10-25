@@ -28,6 +28,7 @@ exports.defaultChainId = exports.web3Config = void 0;
 var dotenv = __importStar(require("dotenv"));
 var _enums_1 = require("../enums");
 dotenv.config();
+console.log(process.env);
 exports.web3Config = (_a = {},
     _a[_enums_1.ChainId.BSC] = {
         httpHosts: [
