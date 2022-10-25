@@ -4,8 +4,6 @@ import { Web3Map } from "@types";
 
 dotenv.config();
 
-console.log(process.env)
-
 export const web3Config: Web3Map = {
     [ChainId.BSC]: {
         httpHosts: [
