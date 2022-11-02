@@ -1,10 +1,8 @@
 # Biswap Common Library
 
 #### Prerequisites
-- Node v14 and above
-
-#### Environment variables
-> Variables **must be specified** in the project where Common library is used
+> - Node v14 and above.
+> - Environment variables **must be specified** in the project where Common library is used
 
 ### Constants:
 1. Addresses
