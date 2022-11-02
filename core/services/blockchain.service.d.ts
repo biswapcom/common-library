@@ -37,19 +37,27 @@ export declare class BlockchainService {
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *
+     * @param {string} address - Address of contract in DB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     * @return {Contract}
+     */
+    getEthContractByAddress(address: string, chainId?: ChainId): Promise<Contract>;
+    /**
+     * DB Contract by name
+     *
      * @param {string} name - Name of contract in DB
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
      * @return {ContractDb}
      */
     getContractByName(name: string, chainId?: ChainId): Promise<ContractDb>;
     /**
-     * Contract object that makes easy to interact with smart contracts on the blockchain network
+     * DB Contract by address
      *
-     * @param {string} address - Address of contract in DB
+     * @param {string} address - Address of contract
      * @param {number} chainId - Chain ID to connect to the correct blockchain network
-     * @return {Contract}
+     * @return {ContractDb}
      */
-    getEthContractByAddress(address: string, chainId?: ChainId): Promise<Contract>;
+    getContractByAddress(address: string, chainId?: ChainId): Promise<ContractDb>;
     /**
      * Exchange liquidity provider token to USD
      *
@@ -58,23 +66,44 @@ export declare class BlockchainService {
      * @param {number} chainId
      */
     exchangeLPTokenToUSD(amountFrom: string, pair: Pair, chainId?: ChainId): Promise<string>;
+    /**
+     * Exchange ERC20 token to USDT
+     *
+     * @param {string} amountFrom - Exchange amount
+     * @param {string} tokenFrom - Token address
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     *
+     * @return {string} - USDT in Wei
+     */
     exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
+    /**
+     * Core pair by token addresses
+     *
+     * @param {string} tokenA
+     * @param {string} tokenB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     *
+     * @return {Pair}
+     * @private
+     */
     private getCorePair;
     private getExchangePair;
     multiCall(ABI: any, calls: MulticallCall[], chainId?: ChainId): Promise<any>;
     /**
-     * List of launchpool addresses
+     * List of farms addresses
      *
      * @param {number} chainId – Chain ID to connect to the correct blockchain network
      * @return {string[]}
      */
-    getPoolAddresses(chainId?: ChainId): Promise<string[]>;
+    getFarmsAddresses(chainId?: ChainId): Promise<string[]>;
     /**
-     * Generate pair address from tokens addresses
+     * Get pair address by tokens addresses
      *
      * @param {string} tokenA - Address of token A
      * @param {string} tokenB - Address of token B
      * @param {number} chainId – Chain ID to connect to the correct blockchain network
+     *
+     * @return {string} - Pair address
      */
     getPairAddress(tokenA: string, tokenB: string, chainId?: ChainId): Promise<string>;
     /**
