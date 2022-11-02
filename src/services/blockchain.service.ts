@@ -1,5 +1,5 @@
 import { AbiItem } from "web3-utils";
-import {ContractDb, MulticallCall, Pair} from "@types";
+import { ContractDb, MulticallCall, Pair } from "@types";
 import { Interface } from '@ethersproject/abi';
 import { Contract } from "web3-eth-contract";
 import { toBN } from "@helpers";
@@ -70,22 +70,9 @@ export class BlockchainService {
      * @return {Contract}
      */
     async getEthContractByName(name: string, chainId: ChainId = defaultChainId): Promise<Contract> {
-        const contract = await request.get(`contracts/${name}/name`, { chainId });
+        const contract: ContractDb = await this.getContractByName(name, chainId);
 
-        return this.getEthContract(contract['abi'], contract['address']);
-    }
-
-    /**
-     * Contract object that makes easy to interact with smart contracts on the blockchain network
-     *
-     * @param {string} name - Name of contract in DB
-     * @param {number} chainId - Chain ID to connect to the correct blockchain network
-     * @return {ContractDb}
-     */
-    async getContractByName(name: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
-        const contract = await request.get(`contracts/${name}/name`, { chainId });
-
-        return contract;
+        return this.getEthContract(contract.abi, contract.address);
     }
 
     /**
@@ -96,9 +83,31 @@ export class BlockchainService {
      * @return {Contract}
      */
     async getEthContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<Contract> {
-        const contract = await request.get(`contracts/${address.toLowerCase()}/address`, { chainId });
+        const contract: ContractDb = await this.getContractByAddress(address, chainId)
 
-        return this.getEthContract(contract['abi'], contract['address']);
+        return this.getEthContract(contract.abi, contract.address);
+    }
+
+    /**
+     * DB Contract by name
+     *
+     * @param {string} name - Name of contract in DB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     * @return {ContractDb}
+     */
+    async getContractByName(name: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
+        return request.get(`contracts/${name}/name`, { chainId });
+    }
+
+    /**
+     * DB Contract by address
+     *
+     * @param {string} address - Address of contract
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     * @return {ContractDb}
+     */
+    async getContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
+        return request.get(`contracts/${address.toLowerCase()}/address`, { chainId });
     }
 
     /**
@@ -131,6 +140,15 @@ export class BlockchainService {
             : '0';
     }
 
+    /**
+     * Exchange ERC20 token to USDT
+     *
+     * @param {string} amountFrom - Exchange amount
+     * @param {string} tokenFrom - Token address
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     *
+     * @return {string} - USDT in Wei
+     */
     async exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId: ChainId = defaultChainId): Promise<string> {
         const amount = toBN(amountFrom);
         const coreTokens = this.getCoreTokens(chainId);
@@ -178,6 +196,16 @@ export class BlockchainService {
         return usdtAmount.toString(10);
     }
 
+    /**
+     * Core pair by token addresses
+     *
+     * @param {string} tokenA
+     * @param {string} tokenB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     *
+     * @return {Pair}
+     * @private
+     */
     private async getCorePair(tokenA: string, tokenB: string, chainId: number = defaultChainId): Promise<Pair | null> {
         if (this.db) {
             const corePair = await this.db.collection('pairs').findOne({
@@ -199,10 +227,10 @@ export class BlockchainService {
             chainId
         });
 
-        return corePairResponse.data;
+        return corePairResponse.data as Pair;
     }
 
-    private async getExchangePair(tokenFrom: string, chainId: number =defaultChainId) {
+    private async getExchangePair(tokenFrom: string, chainId: number = defaultChainId): Promise<Pair> {
         const coreTokens: string[] = Object.values(this.getCoreTokens(chainId));
 
         if (this.db) {
@@ -225,7 +253,7 @@ export class BlockchainService {
                 .toArray()
 
             if (pair) {
-                return pair;
+                return pair as Pair;
             }
 
             return null;
@@ -237,7 +265,7 @@ export class BlockchainService {
             chainId
         });
 
-        return exchangePair.data;
+        return exchangePair.data as Pair;
     }
 
     async multiCall(ABI, calls: MulticallCall[], chainId: ChainId = defaultChainId) {
@@ -249,7 +277,7 @@ export class BlockchainService {
         ]);
 
         try {
-            const multicall = await request.get('contracts/multicall/name', { chainId });
+            const multicall: ContractDb = await this.getContractByName('multicall', chainId);
             const multiCallContract = this.getEthContract(multicall['abi'], multicall['address'], chainId);
             const { returnData } = await multiCallContract.methods
                 .aggregate(callData)
@@ -262,18 +290,18 @@ export class BlockchainService {
     }
 
     /**
-     * List of launchpool addresses
+     * List of farms addresses
      *
      * @param {number} chainId – Chain ID to connect to the correct blockchain network
      * @return {string[]}
      */
-    async getPoolAddresses(chainId: ChainId = defaultChainId): Promise<string[]> {
-        const farm = await request.get('contracts/farm/name', { chainId });
-        const masterChefContract = this.getEthContract(farm['abi'], farm['address']);
+    async getFarmsAddresses(chainId: ChainId = defaultChainId): Promise<string[]> {
+        const farm: ContractDb = await this.getContractByName('farm', chainId);
+        const masterChefContract = this.getEthContract(farm.abi, farm.address);
         const poolsCount = await masterChefContract.methods.poolLength().call();
         const calls: MulticallCall[] = [];
 
-        // skip BSW at 0 position
+        // skip BSW pool at 0 position
         for (let poolIndex = 1; poolIndex < poolsCount; poolIndex++) {
             calls.push({
                 address: farm['address'],
@@ -282,17 +310,19 @@ export class BlockchainService {
             });
         }
 
-        const pools = await this.multiCall(farm['abi'], calls);
+        const pools = await this.multiCall(farm.abi, calls);
 
         return pools.filter(pool => !pool.allocPoint.isZero()).map(pool => pool.lpToken.toLowerCase());
     }
 
     /**
-     * Generate pair address from tokens addresses
+     * Get pair address by tokens addresses
      *
      * @param {string} tokenA - Address of token A
      * @param {string} tokenB - Address of token B
      * @param {number} chainId – Chain ID to connect to the correct blockchain network
+     *
+     * @return {string} - Pair address
      */
     async getPairAddress(tokenA: string, tokenB: string, chainId: ChainId = defaultChainId): Promise<string> {
         const web3 = this.getWeb3(chainId);
@@ -303,9 +333,9 @@ export class BlockchainService {
             .join('');
 
         const salt = web3.utils.soliditySha3(abiEncoded1);
-        const factory = await request.get('contracts/factory/name', { chainId });
+        const factory: ContractDb = await this.getContractByName('factory', chainId);
 
-        const abiEncoded2 = web3.eth.abi.encodeParameters([ 'address', 'bytes32' ], [ factory['address'], salt ])
+        const abiEncoded2 = web3.eth.abi.encodeParameters([ 'address', 'bytes32' ], [ factory.address, salt ])
             .split('0'.repeat(24))
             .join('')
             .substring(2);
@@ -371,7 +401,7 @@ export class BlockchainService {
         throw Error(`Cannot find the token address by symbol "${symbol}"`);
     }
 
-    setDb (db: Db) {
+    setDb(db: Db) {
         this.db = db;
     }
 

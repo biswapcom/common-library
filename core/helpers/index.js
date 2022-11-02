@@ -50,11 +50,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sleep = void 0;
+exports.isDefaultReferrer = exports.sleep = void 0;
+var _configs_1 = require("../configs");
+var _constants_1 = require("../constants");
 __exportStar(require("./big-number.helper"), exports);
 /**
  * @param {number} ms - Milliseconds
- * @returns {Promise<unknown>}
+ * @returns {Promise<void>}
  */
 var sleep = function (ms) {
     if (ms === void 0) { ms = 1000; }
@@ -63,3 +65,15 @@ var sleep = function (ms) {
     }); });
 };
 exports.sleep = sleep;
+/**
+ * Check is this address is default referrer address
+ *
+ * @param {string} address
+ * @param {number} chainId
+ * @returns {Promise<boolean>}
+ */
+var isDefaultReferrer = function (address, chainId) {
+    if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+    return address.toLowerCase() === _constants_1.DEFAULT_REFERRAL_ADDRESS[chainId].toLowerCase();
+};
+exports.isDefaultReferrer = isDefaultReferrer;

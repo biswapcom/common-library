@@ -1,6 +1,15 @@
+import { ChainId } from "../enums";
 export * from './big-number.helper';
 /**
  * @param {number} ms - Milliseconds
- * @returns {Promise<unknown>}
+ * @returns {Promise<void>}
  */
 export declare const sleep: (ms?: number) => Promise<unknown>;
+/**
+ * Check is this address is default referrer address
+ *
+ * @param {string} address
+ * @param {number} chainId
+ * @returns {Promise<boolean>}
+ */
+export declare const isDefaultReferrer: (address: string, chainId?: ChainId) => boolean;

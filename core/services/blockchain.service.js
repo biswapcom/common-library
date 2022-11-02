@@ -129,31 +129,10 @@ var BlockchainService = /** @class */ (function () {
             var contract;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(name, "/name"), { chainId: chainId })];
+                    case 0: return [4 /*yield*/, this.getContractByName(name, chainId)];
                     case 1:
                         contract = _a.sent();
-                        return [2 /*return*/, this.getEthContract(contract['abi'], contract['address'])];
-                }
-            });
-        });
-    };
-    /**
-     * Contract object that makes easy to interact with smart contracts on the blockchain network
-     *
-     * @param {string} name - Name of contract in DB
-     * @param {number} chainId - Chain ID to connect to the correct blockchain network
-     * @return {ContractDb}
-     */
-    BlockchainService.prototype.getContractByName = function (name, chainId) {
-        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
-        return __awaiter(this, void 0, void 0, function () {
-            var contract;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(name, "/name"), { chainId: chainId })];
-                    case 1:
-                        contract = _a.sent();
-                        return [2 /*return*/, contract];
+                        return [2 /*return*/, this.getEthContract(contract.abi, contract.address)];
                 }
             });
         });
@@ -171,11 +150,41 @@ var BlockchainService = /** @class */ (function () {
             var contract;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _services_1.requestService.get("contracts/".concat(address.toLowerCase(), "/address"), { chainId: chainId })];
+                    case 0: return [4 /*yield*/, this.getContractByAddress(address, chainId)];
                     case 1:
                         contract = _a.sent();
-                        return [2 /*return*/, this.getEthContract(contract['abi'], contract['address'])];
+                        return [2 /*return*/, this.getEthContract(contract.abi, contract.address)];
                 }
+            });
+        });
+    };
+    /**
+     * DB Contract by name
+     *
+     * @param {string} name - Name of contract in DB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     * @return {ContractDb}
+     */
+    BlockchainService.prototype.getContractByName = function (name, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, _services_1.requestService.get("contracts/".concat(name, "/name"), { chainId: chainId })];
+            });
+        });
+    };
+    /**
+     * DB Contract by address
+     *
+     * @param {string} address - Address of contract
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     * @return {ContractDb}
+     */
+    BlockchainService.prototype.getContractByAddress = function (address, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, _services_1.requestService.get("contracts/".concat(address.toLowerCase(), "/address"), { chainId: chainId })];
             });
         });
     };
@@ -219,6 +228,15 @@ var BlockchainService = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Exchange ERC20 token to USDT
+     *
+     * @param {string} amountFrom - Exchange amount
+     * @param {string} tokenFrom - Token address
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     *
+     * @return {string} - USDT in Wei
+     */
     BlockchainService.prototype.exchangeTokenToUSDT = function (amountFrom, tokenFrom, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
@@ -264,6 +282,16 @@ var BlockchainService = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Core pair by token addresses
+     *
+     * @param {string} tokenA
+     * @param {string} tokenB
+     * @param {number} chainId - Chain ID to connect to the correct blockchain network
+     *
+     * @return {Pair}
+     * @private
+     */
     BlockchainService.prototype.getCorePair = function (tokenA, tokenB, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
@@ -352,7 +380,7 @@ var BlockchainService = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 4, , 5]);
-                        return [4 /*yield*/, _services_1.requestService.get('contracts/multicall/name', { chainId: chainId })];
+                        return [4 /*yield*/, this.getContractByName('multicall', chainId)];
                     case 2:
                         multicall = _a.sent();
                         multiCallContract = this.getEthContract(multicall['abi'], multicall['address'], chainId);
@@ -372,26 +400,26 @@ var BlockchainService = /** @class */ (function () {
         });
     };
     /**
-     * List of launchpool addresses
+     * List of farms addresses
      *
      * @param {number} chainId – Chain ID to connect to the correct blockchain network
      * @return {string[]}
      */
-    BlockchainService.prototype.getPoolAddresses = function (chainId) {
+    BlockchainService.prototype.getFarmsAddresses = function (chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
             var farm, masterChefContract, poolsCount, calls, poolIndex, pools;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _services_1.requestService.get('contracts/farm/name', { chainId: chainId })];
+                    case 0: return [4 /*yield*/, this.getContractByName('farm', chainId)];
                     case 1:
                         farm = _a.sent();
-                        masterChefContract = this.getEthContract(farm['abi'], farm['address']);
+                        masterChefContract = this.getEthContract(farm.abi, farm.address);
                         return [4 /*yield*/, masterChefContract.methods.poolLength().call()];
                     case 2:
                         poolsCount = _a.sent();
                         calls = [];
-                        // skip BSW at 0 position
+                        // skip BSW pool at 0 position
                         for (poolIndex = 1; poolIndex < poolsCount; poolIndex++) {
                             calls.push({
                                 address: farm['address'],
@@ -399,7 +427,7 @@ var BlockchainService = /** @class */ (function () {
                                 params: [poolIndex]
                             });
                         }
-                        return [4 /*yield*/, this.multiCall(farm['abi'], calls)];
+                        return [4 /*yield*/, this.multiCall(farm.abi, calls)];
                     case 3:
                         pools = _a.sent();
                         return [2 /*return*/, pools.filter(function (pool) { return !pool.allocPoint.isZero(); }).map(function (pool) { return pool.lpToken.toLowerCase(); })];
@@ -408,11 +436,13 @@ var BlockchainService = /** @class */ (function () {
         });
     };
     /**
-     * Generate pair address from tokens addresses
+     * Get pair address by tokens addresses
      *
      * @param {string} tokenA - Address of token A
      * @param {string} tokenB - Address of token B
      * @param {number} chainId – Chain ID to connect to the correct blockchain network
+     *
+     * @return {string} - Pair address
      */
     BlockchainService.prototype.getPairAddress = function (tokenA, tokenB, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
@@ -427,10 +457,10 @@ var BlockchainService = /** @class */ (function () {
                             .split('0'.repeat(24))
                             .join('');
                         salt = web3.utils.soliditySha3(abiEncoded1);
-                        return [4 /*yield*/, _services_1.requestService.get('contracts/factory/name', { chainId: chainId })];
+                        return [4 /*yield*/, this.getContractByName('factory', chainId)];
                     case 1:
                         factory = _b.sent();
-                        abiEncoded2 = web3.eth.abi.encodeParameters(['address', 'bytes32'], [factory['address'], salt])
+                        abiEncoded2 = web3.eth.abi.encodeParameters(['address', 'bytes32'], [factory.address, salt])
                             .split('0'.repeat(24))
                             .join('')
                             .substring(2);
