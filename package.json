@@ -1,20 +1,8 @@
 {
   "name": "bs-common-library",
-  "description": "All common tools, utils, services and etc. for Biswap products",
   "version": "1.0.9",
   "private": true,
-  "main": "./core/index.js",
-  "types": "./core/index.d.ts",
-  "scripts": {
-    "build": "rm -rf ./core && tsc && tsconfig-replace-paths -s ./src && npm pack"
-  },
-  "files": [
-    "core/**"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/biswapcom/common-library.git"
-  },
+  "description": "All common tools, utils, services and etc. for Biswap products",
   "keywords": [
     "nodejs",
     "mongodb",
@@ -22,12 +10,24 @@
     "rabbitmq",
     "bignumber"
   ],
-  "author": "bs-dev",
-  "license": "ISC",
+  "homepage": "https://github.com/biswapcom/common-library#readme",
   "bugs": {
     "url": "https://github.com/biswapcom/common-library/issues"
   },
-  "homepage": "https://github.com/biswapcom/common-library#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biswapcom/common-library.git"
+  },
+  "license": "ISC",
+  "author": "bs-dev",
+  "main": "./core/index.js",
+  "types": "./core/index.d.ts",
+  "files": [
+    "core/**"
+  ],
+  "scripts": {
+    "build": "rm -rf ./core && tsc && tsconfig-replace-paths -s ./src && npm pack"
+  },
   "dependencies": {
     "bignumber.js": "9.1.0",
     "colors": "1.4.0",
@@ -38,20 +38,19 @@
     "moment": "2.29.4",
     "mongodb": "4.11.0",
     "node-fetch": "2.6.7",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "3.14.1",
     "tsconfig-replace-paths": "0.0.11",
+    "typescript": "4.8.2",
     "underscore": "1.12.1",
     "uuid": "9.0.0",
-    "web3": "1.8.0",
-    "web3-utils": "1.8.0",
-    "typescript": "4.8.2"
+    "web3": "1.8.1",
+    "web3-utils": "1.8.1"
   },
   "devDependencies": {
     "@types/node": "18.7.14",
     "@types/web3": "1.2.2",
     "@types/web3-eth-abi": "1.2.2",
-    "nodemon": "2.0.19",
-    "ts-node": "10.9.1",
-    "tsconfig-paths": "3.14.1",
-    "tsconfig-replace-paths": "0.0.11"
+    "nodemon": "2.0.19"
   }
 }
