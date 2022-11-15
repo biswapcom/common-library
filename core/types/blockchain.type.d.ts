@@ -1,3 +1,4 @@
+import { ObjectId } from "bson";
 export declare type AddressMap = {
     [chainId: number]: string;
 };
@@ -29,6 +30,7 @@ export declare type MulticallCall = {
     params: any[];
 };
 export declare type ContractDb = {
+    _id?: ObjectId;
     chainId: number;
     name: string;
     type: string;

@@ -168,8 +168,17 @@ var BlockchainService = /** @class */ (function () {
     BlockchainService.prototype.getContractByName = function (name, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
+            var contract;
             return __generator(this, function (_a) {
-                return [2 /*return*/, _services_1.requestService.get("contracts/".concat(name, "/name"), { chainId: chainId })];
+                switch (_a.label) {
+                    case 0:
+                        if (!this.db) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.db.collection('contracts').findOne({ name: name, chainId: chainId })];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, contract];
+                    case 2: return [2 /*return*/, _services_1.requestService.get("contracts/".concat(name, "/name"), { chainId: chainId })];
+                }
             });
         });
     };
@@ -183,8 +192,17 @@ var BlockchainService = /** @class */ (function () {
     BlockchainService.prototype.getContractByAddress = function (address, chainId) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
+            var contract;
             return __generator(this, function (_a) {
-                return [2 /*return*/, _services_1.requestService.get("contracts/".concat(address.toLowerCase(), "/address"), { chainId: chainId })];
+                switch (_a.label) {
+                    case 0:
+                        if (!this.db) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.db.collection('contracts').findOne({ address: address.toLowerCase(), chainId: chainId })];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, contract];
+                    case 2: return [2 /*return*/, _services_1.requestService.get("contracts/".concat(address.toLowerCase(), "/address"), { chainId: chainId })];
+                }
             });
         });
     };
