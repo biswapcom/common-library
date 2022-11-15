@@ -96,6 +96,12 @@ export class BlockchainService {
      * @return {ContractDb}
      */
     async getContractByName(name: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
+        if (this.db) {
+            const contract = await this.db.collection('contracts').findOne({ name, chainId });
+
+            return contract as ContractDb;
+        }
+
         return request.get(`contracts/${name}/name`, { chainId });
     }
 
@@ -107,6 +113,12 @@ export class BlockchainService {
      * @return {ContractDb}
      */
     async getContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
+        if (this.db) {
+            const contract = await this.db.collection('contracts').findOne({ address: address.toLowerCase(), chainId });
+
+            return contract as ContractDb;
+        }
+
         return request.get(`contracts/${address.toLowerCase()}/address`, { chainId });
     }
 
