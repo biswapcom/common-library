@@ -38,7 +38,7 @@
     "moment": "2.29.4",
     "mongodb": "4.11.0",
     "node-fetch": "2.6.7",
-    "node-telegram-bot-api": "^0.60.0",
+    "node-telegram-bot-api": "0.60.0",
     "ts-node": "10.9.1",
     "tsconfig-paths": "3.14.1",
     "tsconfig-replace-paths": "0.0.11",

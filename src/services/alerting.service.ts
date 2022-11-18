@@ -1,7 +1,6 @@
-import {alertingConfig} from "@configs";
-import * as Telegram from 'node-telegram-bot-api'
-import {logService} from '@services/log.service'
-
+import { alertingConfig } from "@configs";
+import * as Telegram from 'node-telegram-bot-api';
+import { logService } from '@services/log.service';
 
 /**
  * @example
@@ -38,7 +37,6 @@ export class AlertingService {
         this.initPromise = new Telegram.default(this.botAuthKey);
     }
 
-
     async sendText(title: string, text: string) {
         if (this.withoutAlerts) return;
         const client = await this._getClient();
@@ -46,7 +44,5 @@ export class AlertingService {
         await client.sendMessage(this.chatId, msg, {parse_mode: 'html'})
             .catch(err=>logService.error(`AlertingService::sendText\n${err.toString()}`));
     }
-
-
 
 }
