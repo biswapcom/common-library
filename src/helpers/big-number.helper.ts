@@ -15,3 +15,25 @@ export const multiPlus = (...values: string[] | number[]): BN => {
 
     return result;
 }
+
+/**
+ * 1000000000000000000 in BigNumber
+ */
+export const oneBN = (): BN => {
+    return toBN(1e18.toString());
+}
+
+/**
+ * Representing the value in natural (fixed-point) notation rounded to `decimalPlaces` decimal places and divided by 1e18.
+ *
+ * @param {BN|string|number} value
+ * @param {number} decimalPlaces
+ * @param {BN.RoundingMode} roundingMode
+ */
+export const valueToFixed = (value: BN | string | number, decimalPlaces: number = 6, roundingMode?: BN.RoundingMode): string => {
+    if (typeof value === 'object') {
+        return value.toFixed(decimalPlaces, roundingMode);
+    }
+
+    return toBN(value).toFixed(decimalPlaces, roundingMode);
+}
