@@ -1,11 +1,15 @@
 import {alertingConfig} from "@configs";
 import * as Telegram from 'node-telegram-bot-api'
-import {logService} from './log.service'
+import {logService} from '@services/log.service'
 
 
-/** example -
+/**
+ * @example
+ * ```js
+ * import {AlertingService} from '@services'
  * const alerting = new AlertingService();
  * await alerting.sendText('Some title', 'some text')
+ * ```
  */
 
 export class AlertingService {
@@ -21,7 +25,6 @@ export class AlertingService {
     };
 
     /**
-     *
      * @param botAuthKey - your bot auth key
      * @param chatId -  chat id where you want to send a message (your bot must be admin of this chat)
      * @param withoutAlerts - if you don't need alerts (as example - for local development)
