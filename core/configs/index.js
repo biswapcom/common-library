@@ -16,3 +16,4 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./api.config"), exports);
 __exportStar(require("./blockchain.config"), exports);
+__exportStar(require("./alerting.config"), exports);
