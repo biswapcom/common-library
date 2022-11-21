@@ -14,3 +14,5 @@ export class UsersService {
         return user as User | null;
     }
 }
+
+export const usersService = new UsersService();
