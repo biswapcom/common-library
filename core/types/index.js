@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./balance.type"), exports);
 __exportStar(require("./blockchain.type"), exports);
 __exportStar(require("./pair.type"), exports);
+__exportStar(require("./user.type"), exports);

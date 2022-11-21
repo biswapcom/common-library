@@ -18,3 +18,4 @@ __exportStar(require("./request.service"), exports);
 __exportStar(require("./blockchain.service"), exports);
 __exportStar(require("./log.service"), exports);
 __exportStar(require("./alerting.service"), exports);
+__exportStar(require("./users.service"), exports);
