@@ -43,6 +43,10 @@ var UsersService = /** @class */ (function () {
     UsersService.prototype.setDb = function (db) {
         this.db = db;
     };
+    /**
+     * getUserByAddress
+     * @param address - user wallet address
+     */
     UsersService.prototype.getUserByAddress = function (address) {
         return __awaiter(this, void 0, void 0, function () {
             var user;
