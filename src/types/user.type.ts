@@ -29,4 +29,7 @@ export interface User {
 
     autoPoolShares: string;
     chainId?: number;
+
+    // Affiliate program ID
+    clickId?: string;
 }
