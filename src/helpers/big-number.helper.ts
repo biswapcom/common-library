@@ -32,8 +32,8 @@ export const oneBN = (): BN => {
  */
 export const valueToFixed = (value: BN | string | number, decimalPlaces: number = 6, roundingMode?: BN.RoundingMode): string => {
     if (typeof value === 'object') {
-        return value.toFixed(decimalPlaces, roundingMode);
+        return value.div(1e18).toFixed(decimalPlaces, roundingMode);
     }
 
-    return toBN(value).toFixed(decimalPlaces, roundingMode);
+    return toBN(value).div(1e18).toFixed(decimalPlaces, roundingMode);
 }

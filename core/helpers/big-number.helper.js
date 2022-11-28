@@ -40,8 +40,8 @@ exports.oneBN = oneBN;
 var valueToFixed = function (value, decimalPlaces, roundingMode) {
     if (decimalPlaces === void 0) { decimalPlaces = 6; }
     if (typeof value === 'object') {
-        return value.toFixed(decimalPlaces, roundingMode);
+        return value.div(1e18).toFixed(decimalPlaces, roundingMode);
     }
-    return (0, exports.toBN)(value).toFixed(decimalPlaces, roundingMode);
+    return (0, exports.toBN)(value).div(1e18).toFixed(decimalPlaces, roundingMode);
 };
 exports.valueToFixed = valueToFixed;
