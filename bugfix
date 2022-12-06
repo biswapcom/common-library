@@ -3,5 +3,5 @@ BS_BACKEND_URI=http://localhost:3045
 BSC_PROVIDER=https://bsc-mainnet.nodereal.io/v1/ef269c169b624e28acb38925c0db4e9b
 
 # Telegram
-TG_AUTH_KEY=5130648627:AAFkc1kUDArOX3w7IeSNrlYPSzmlZBQEtvA
-TG_CHAT_ID=-806723969
+TG_AUTH_KEY=
+TG_CHAT_ID=
