@@ -207,13 +207,17 @@ var BlockchainService = /** @class */ (function () {
         });
     };
     /**
-     * Exchange liquidity provider token to USD
+     * Exchange liquidity provider token to USDT
      *
      * @param {string} amountFrom
      * @param {Pair} pair
+     * @param {number} decimalPlaces - Decimal places, integer, 0 to 1e+9.
      * @param {number} chainId
+     *
+     * @return {string} - USDT in Wei
      */
-    BlockchainService.prototype.exchangeLPTokenToUSD = function (amountFrom, pair, chainId) {
+    BlockchainService.prototype.exchangeLPTokenToUSD = function (amountFrom, pair, decimalPlaces, chainId) {
+        if (decimalPlaces === void 0) { decimalPlaces = 0; }
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
         return __awaiter(this, void 0, void 0, function () {
             var liquidity;
@@ -240,7 +244,7 @@ var BlockchainService = /** @class */ (function () {
                                     .plus((0, _helpers_1.toBN)(liquidity.b))
                                     .multipliedBy((0, _helpers_1.toBN)(amountFrom))
                                     .div((0, _helpers_1.toBN)(pair.totalSupply))
-                                    .toString(10)
+                                    .toFixed(decimalPlaces)
                                 : '0'];
                 }
             });

@@ -24,4 +24,5 @@ export interface User {
     statsVolumeSwap: string;
     autoPoolShares: string;
     chainId?: number;
+    clickId?: string;
 }

@@ -123,13 +123,21 @@ export class BlockchainService {
     }
 
     /**
-     * Exchange liquidity provider token to USD
+     * Exchange liquidity provider token to USDT
      *
      * @param {string} amountFrom
      * @param {Pair} pair
+     * @param {number} decimalPlaces - Decimal places, integer, 0 to 1e+9.
      * @param {number} chainId
+     *
+     * @return {string} - USDT in Wei
      */
-    async exchangeLPTokenToUSD(amountFrom: string, pair: Pair, chainId: ChainId = defaultChainId): Promise<string> {
+    async exchangeLPTokenToUSD(
+        amountFrom: string,
+        pair: Pair,
+        decimalPlaces: number = 0,
+        chainId: ChainId = defaultChainId
+    ): Promise<string> {
         const liquidity = {
             a: await this.exchangeTokenToUSDT(pair.reserveA, pair.tokenA, chainId),
             b: await this.exchangeTokenToUSDT(pair.reserveB, pair.tokenB, chainId)
@@ -148,7 +156,7 @@ export class BlockchainService {
                 .plus(toBN(liquidity.b))
                 .multipliedBy(toBN(amountFrom))
                 .div(toBN(pair.totalSupply))
-                .toString(10)
+                .toFixed(decimalPlaces)
             : '0';
     }
 

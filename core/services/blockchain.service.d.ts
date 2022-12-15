@@ -59,13 +59,16 @@ export declare class BlockchainService {
      */
     getContractByAddress(address: string, chainId?: ChainId): Promise<ContractDb>;
     /**
-     * Exchange liquidity provider token to USD
+     * Exchange liquidity provider token to USDT
      *
      * @param {string} amountFrom
      * @param {Pair} pair
+     * @param {number} decimalPlaces - Decimal places, integer, 0 to 1e+9.
      * @param {number} chainId
+     *
+     * @return {string} - USDT in Wei
      */
-    exchangeLPTokenToUSD(amountFrom: string, pair: Pair, chainId?: ChainId): Promise<string>;
+    exchangeLPTokenToUSD(amountFrom: string, pair: Pair, decimalPlaces?: number, chainId?: ChainId): Promise<string>;
     /**
      * Exchange ERC20 token to USDT
      *
