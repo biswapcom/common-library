@@ -1,5 +1,5 @@
 import { Db } from "mongodb";
-import {User} from "@types";
+import { User } from "@types";
 
 
 export class UsersService {

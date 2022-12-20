@@ -1,6 +1,6 @@
 {
   "name": "bs-common-library",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "private": true,
   "description": "All common tools, utils, services and etc. for Biswap products",
   "keywords": [
