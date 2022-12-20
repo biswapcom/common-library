@@ -1,4 +1,5 @@
 import { AbiItem } from "web3-utils";
+import { AddAccount, AddedAccount } from "web3-core";
 import { ContractDb, MulticallCall, Pair } from "../types";
 import { Contract } from "web3-eth-contract";
 import { ChainId } from "../enums";
@@ -26,6 +27,12 @@ export declare class BlockchainService {
      * @return {Contract}
      */
     getEthContract(abi: AbiItem[] | string, address: string, chainId?: ChainId): Contract;
+    /**
+     * Adds an account using a private key or account object to the wallet.
+     *
+     * @param [account] - A private key or account object created with web3.eth.accounts.create().
+     */
+    addWallet(account: string | AddAccount): AddedAccount;
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *

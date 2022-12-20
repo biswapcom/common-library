@@ -117,6 +117,14 @@ var BlockchainService = /** @class */ (function () {
         return new web3.eth.Contract(jsonInterface, address);
     };
     /**
+     * Adds an account using a private key or account object to the wallet.
+     *
+     * @param [account] - A private key or account object created with web3.eth.accounts.create().
+     */
+    BlockchainService.prototype.addWallet = function (account) {
+        return this.web3.eth.accounts.wallet.add(account);
+    };
+    /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *
      * @param {string} name - Name of contract in DB
