@@ -8,9 +8,10 @@ export declare enum WithdrawalStatus {
     Repay = 3
 }
 export declare enum WithdrawalType {
-    Pool = "pool",
     Competition = "competition",
+    DividendPool = "divPool",
     Farm = "farm",
+    Pool = "pool",
     Swap = "swap",
     Distribution = "distribution",
     Squid = "squid",

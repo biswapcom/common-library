@@ -9,13 +9,14 @@ export enum WithdrawalStatus {
 }
 
 export enum WithdrawalType {
-    Pool = 'pool',
     Competition = 'competition',
+    DividendPool = 'divPool',
     Farm = 'farm',
+    Pool = 'pool',
     Swap = 'swap',
-    Distribution = 'distribution',
 
     // R.I.P. types
+    Distribution = 'distribution',
     Squid = 'squid',
     Lottery = 'lottery',
 }

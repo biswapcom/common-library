@@ -13,12 +13,13 @@ var WithdrawalStatus;
 })(WithdrawalStatus = exports.WithdrawalStatus || (exports.WithdrawalStatus = {}));
 var WithdrawalType;
 (function (WithdrawalType) {
-    WithdrawalType["Pool"] = "pool";
     WithdrawalType["Competition"] = "competition";
+    WithdrawalType["DividendPool"] = "divPool";
     WithdrawalType["Farm"] = "farm";
+    WithdrawalType["Pool"] = "pool";
     WithdrawalType["Swap"] = "swap";
-    WithdrawalType["Distribution"] = "distribution";
     // R.I.P. types
+    WithdrawalType["Distribution"] = "distribution";
     WithdrawalType["Squid"] = "squid";
     WithdrawalType["Lottery"] = "lottery";
 })(WithdrawalType = exports.WithdrawalType || (exports.WithdrawalType = {}));
