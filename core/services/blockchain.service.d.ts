@@ -31,8 +31,9 @@ export declare class BlockchainService {
      * Adds an account using a private key or account object to the wallet.
      *
      * @param [account] - A private key or account object created with web3.eth.accounts.create().
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
      */
-    addWallet(account: string | AddAccount): AddedAccount;
+    addWallet(account: string | AddAccount, chainId?: ChainId): AddedAccount;
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
      *

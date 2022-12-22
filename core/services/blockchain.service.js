@@ -120,9 +120,12 @@ var BlockchainService = /** @class */ (function () {
      * Adds an account using a private key or account object to the wallet.
      *
      * @param [account] - A private key or account object created with web3.eth.accounts.create().
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
      */
-    BlockchainService.prototype.addWallet = function (account) {
-        return this.web3.eth.accounts.wallet.add(account);
+    BlockchainService.prototype.addWallet = function (account, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        var web3 = this.getWeb3(chainId);
+        return web3.eth.accounts.wallet.add(account);
     };
     /**
      * Contract object that makes easy to interact with smart contracts on the blockchain network
