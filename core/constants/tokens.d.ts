@@ -1,4 +1,4 @@
-import { TokenMap } from "../types";
+import { TokenMap } from '../types';
 export declare const CAKE: TokenMap;
 export declare const BFG: TokenMap;
 export declare const BABY: TokenMap;
