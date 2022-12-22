@@ -1,6 +1,6 @@
-import { alertingConfig } from "@configs";
-import * as Telegram from 'node-telegram-bot-api';
+import { alertingConfig } from '@configs';
 import { logService } from '@services/log.service';
+import TelegramBot, { SendMessageOptions } from 'node-telegram-bot-api';
 
 /**
  * @example
@@ -10,18 +10,12 @@ import { logService } from '@services/log.service';
  * await alerting.sendText('Some title', 'some text')
  * ```
  */
-
 export class AlertingService {
 
-    botAuthKey: string;
-    chatId: string;
-    withoutAlerts: boolean;
+    private readonly chatId: string;
+    private readonly withoutAlerts: boolean;
+    private readonly client: TelegramBot;
 
-    initPromise: Promise<any>;
-
-    async _getClient(){
-        return this.initPromise;
-    };
 
     /**
      * @param botAuthKey - your bot auth key
@@ -29,20 +23,39 @@ export class AlertingService {
      * @param withoutAlerts - if you don't need alerts (as example - for local development)
      */
     constructor(botAuthKey: string = alertingConfig.botAuthKey, chatId: string = alertingConfig.chatId, withoutAlerts: boolean = alertingConfig.withoutAlerts) {
-        this.botAuthKey = botAuthKey;
-        this.chatId = chatId;
         this.withoutAlerts = withoutAlerts;
-        if (!this.botAuthKey) throw Error('Alerting::Undefined botAuthKey');
-        if (!this.chatId) throw Error('Alerting::Undefined chatId');
-        this.initPromise = new Telegram.default(this.botAuthKey);
+
+        if (!botAuthKey) throw Error('Alerting service. Required parameter "botAuthKey" is not specified');
+        if (!chatId) throw Error('Alerting service. Required parameter "chatId" is not specified');
+
+        this.chatId = chatId;
+        this.client = new TelegramBot(botAuthKey);
     }
 
     async sendText(title: string, text: string) {
         if (this.withoutAlerts) return;
-        const client = await this._getClient();
+
         const msg = `\n--------------------\nTitle::\n${title}\n\nMessage::\n${text}`;
-        await client.sendMessage(this.chatId, msg, {parse_mode: 'html'})
-            .catch(err=>logService.error(`AlertingService::sendText\n${err.toString()}`));
+        await this.client.sendMessage(this.chatId, msg, { parse_mode: 'HTML' })
+            .catch(err => logService.error(`AlertingService::sendText\n${err.toString()}`));
+    }
+
+    /**
+     * Send message to Telegram chat
+     *
+     * @param [message]
+     * @param [options]
+     */
+    async sendMessage(message: string) {
+        if (this.withoutAlerts) return;
+
+        try {
+           await this.client.sendMessage(this.chatId, message, { parse_mode: 'Markdown' });
+        } catch (e) {
+            logService.error(`Alerting service cannot send message. ${e.toString()}`);
+        }
     }
 
 }
+
+export const alertingService = new AlertingService();

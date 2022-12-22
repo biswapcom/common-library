@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -58,11 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlertingService = void 0;
+exports.alertingService = exports.AlertingService = void 0;
 var _configs_1 = require("../configs");
-var Telegram = __importStar(require("node-telegram-bot-api"));
 var log_service_1 = require("./log.service");
+var node_telegram_bot_api_1 = __importDefault(require("node-telegram-bot-api"));
 /**
  * @example
  * ```js
@@ -81,40 +61,58 @@ var AlertingService = /** @class */ (function () {
         if (botAuthKey === void 0) { botAuthKey = _configs_1.alertingConfig.botAuthKey; }
         if (chatId === void 0) { chatId = _configs_1.alertingConfig.chatId; }
         if (withoutAlerts === void 0) { withoutAlerts = _configs_1.alertingConfig.withoutAlerts; }
-        this.botAuthKey = botAuthKey;
-        this.chatId = chatId;
         this.withoutAlerts = withoutAlerts;
-        if (!this.botAuthKey)
-            throw Error('Alerting::Undefined botAuthKey');
-        if (!this.chatId)
-            throw Error('Alerting::Undefined chatId');
-        this.initPromise = new Telegram.default(this.botAuthKey);
+        if (!botAuthKey)
+            throw Error('Alerting service. Required parameter "botAuthKey" is not specified');
+        if (!chatId)
+            throw Error('Alerting service. Required parameter "chatId" is not specified');
+        this.chatId = chatId;
+        this.client = new node_telegram_bot_api_1.default(botAuthKey);
     }
-    AlertingService.prototype._getClient = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.initPromise];
-            });
-        });
-    };
-    ;
     AlertingService.prototype.sendText = function (title, text) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, msg;
+            var msg;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (this.withoutAlerts)
                             return [2 /*return*/];
-                        return [4 /*yield*/, this._getClient()];
-                    case 1:
-                        client = _a.sent();
                         msg = "\n--------------------\nTitle::\n".concat(title, "\n\nMessage::\n").concat(text);
-                        return [4 /*yield*/, client.sendMessage(this.chatId, msg, { parse_mode: 'html' })
+                        return [4 /*yield*/, this.client.sendMessage(this.chatId, msg, { parse_mode: 'HTML' })
                                 .catch(function (err) { return log_service_1.logService.error("AlertingService::sendText\n".concat(err.toString())); })];
-                    case 2:
+                    case 1:
                         _a.sent();
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Send message to Telegram chat
+     *
+     * @param [message]
+     * @param [options]
+     */
+    AlertingService.prototype.sendMessage = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this.withoutAlerts)
+                            return [2 /*return*/];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, this.client.sendMessage(this.chatId, message, { parse_mode: 'Markdown' })];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        e_1 = _a.sent();
+                        log_service_1.logService.error("Alerting service cannot send message. ".concat(e_1.toString()));
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -122,3 +120,4 @@ var AlertingService = /** @class */ (function () {
     return AlertingService;
 }());
 exports.AlertingService = AlertingService;
+exports.alertingService = new AlertingService();
