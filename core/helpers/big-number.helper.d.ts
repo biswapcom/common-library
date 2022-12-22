@@ -13,3 +13,9 @@ export declare const oneBN: () => BN;
  * @param {BN.RoundingMode} roundingMode
  */
 export declare const valueToFixed: (value: BN | string | number, decimalPlaces?: number, roundingMode?: BN.RoundingMode) => string;
+/**
+ * Representing the Wei in natural number
+ *
+ * @param [value]
+ */
+export declare const weiToNumber: (value: BN | string) => number;

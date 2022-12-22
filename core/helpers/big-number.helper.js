@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.valueToFixed = exports.oneBN = exports.multiPlus = exports.toBN = void 0;
+exports.weiToNumber = exports.valueToFixed = exports.oneBN = exports.multiPlus = exports.toBN = void 0;
 var bignumber_js_1 = __importDefault(require("bignumber.js"));
 bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
 var toBN = function (value) {
@@ -45,3 +45,15 @@ var valueToFixed = function (value, decimalPlaces, roundingMode) {
     return (0, exports.toBN)(value).div(1e18).toFixed(decimalPlaces, roundingMode);
 };
 exports.valueToFixed = valueToFixed;
+/**
+ * Representing the Wei in natural number
+ *
+ * @param [value]
+ */
+var weiToNumber = function (value) {
+    if (typeof value === 'object') {
+        return parseFloat(value.div(1e18).toString());
+    }
+    return parseFloat((0, exports.toBN)(value).div(1e18).toString());
+};
+exports.weiToNumber = weiToNumber;

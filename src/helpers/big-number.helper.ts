@@ -37,3 +37,16 @@ export const valueToFixed = (value: BN | string | number, decimalPlaces: number 
 
     return toBN(value).div(1e18).toFixed(decimalPlaces, roundingMode);
 }
+
+/**
+ * Representing the Wei in natural number
+ *
+ * @param [value]
+ */
+export const weiToNumber = (value: BN | string): number => {
+    if (typeof value === 'object') {
+        return parseFloat(value.div(1e18).toString());
+    }
+
+    return parseFloat(toBN(value).div(1e18).toString());
+}
