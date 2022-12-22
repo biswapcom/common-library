@@ -1,5 +1,5 @@
-import { ChainId } from "@enums";
-import { TokenMap } from "@types";
+import { ChainId } from '@enums';
+import { TokenMap } from '@types';
 
 export const CAKE: TokenMap = {
     [ChainId.BSC]: {
@@ -8,7 +8,7 @@ export const CAKE: TokenMap = {
         name: 'Pancake Swap',
         core: false
     }
-}
+};
 
 export const BFG: TokenMap = {
     [ChainId.BSC]: {
@@ -17,7 +17,7 @@ export const BFG: TokenMap = {
         name: 'BFG Token',
         core: false
     }
-}
+};
 
 export const BABY: TokenMap = {
     [ChainId.BSC]: {
@@ -26,7 +26,7 @@ export const BABY: TokenMap = {
         name: 'BabySwap Token',
         core: false
     }
-}
+};
 
 export const BANANA: TokenMap = {
     [ChainId.BSC]: {
@@ -35,7 +35,7 @@ export const BANANA: TokenMap = {
         name: 'ApeSwapFinance Banana',
         core: false
     }
-}
+};
 
 export const BSW: TokenMap = {
     [ChainId.BSC]: {
@@ -43,8 +43,8 @@ export const BSW: TokenMap = {
         symbol: 'BSW',
         name: 'Biswap token',
         core: true
-    },
-}
+    }
+};
 
 export const BTCB: TokenMap = {
     [ChainId.BSC]: {
@@ -52,8 +52,8 @@ export const BTCB: TokenMap = {
         symbol: 'BTCB',
         name: 'Bitcoin BEP2',
         core: true
-    },
-}
+    }
+};
 
 export const BUSD: TokenMap = {
     [ChainId.BSC]: {
@@ -61,8 +61,8 @@ export const BUSD: TokenMap = {
         symbol: 'BUSD',
         name: 'Binance USD',
         core: true
-    },
-}
+    }
+};
 
 export const DAI: TokenMap = {
     [ChainId.BSC]: {
@@ -70,8 +70,8 @@ export const DAI: TokenMap = {
         symbol: 'DAI',
         name: 'Dai',
         core: true
-    },
-}
+    }
+};
 
 export const ETH: TokenMap = {
     [ChainId.BSC]: {
@@ -79,8 +79,8 @@ export const ETH: TokenMap = {
         symbol: 'ETH',
         name: 'Ethereum',
         core: true
-    },
-}
+    }
+};
 
 export const EXOS: TokenMap = {
     [ChainId.BSC]: {
@@ -88,8 +88,8 @@ export const EXOS: TokenMap = {
         symbol: 'EXOS',
         name: 'Exobots',
         core: false
-    },
-}
+    }
+};
 
 export const USDT: TokenMap = {
     [ChainId.BSC]: {
@@ -98,7 +98,7 @@ export const USDT: TokenMap = {
         name: 'Tether USD',
         core: true
     }
-}
+};
 
 export const LTC: TokenMap = {
     [ChainId.BSC]: {
@@ -107,7 +107,7 @@ export const LTC: TokenMap = {
         name: 'BiswapPair',
         core: true
     }
-}
+};
 
 export const USDC: TokenMap = {
     [ChainId.BSC]: {
@@ -116,7 +116,7 @@ export const USDC: TokenMap = {
         name: 'USD Coin',
         core: true
     }
-}
+};
 
 export const WBNB: TokenMap = {
     [ChainId.BSC]: {
@@ -136,5 +136,5 @@ export const WBNB: TokenMap = {
         symbol: 'WBNB',
         name: 'Wrapped BNB',
         core: true
-    },
-}
+    }
+};
