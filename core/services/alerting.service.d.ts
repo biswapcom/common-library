@@ -25,4 +25,3 @@ export declare class AlertingService {
      */
     sendMessage(message: string): Promise<void>;
 }
-export declare const alertingService: AlertingService;

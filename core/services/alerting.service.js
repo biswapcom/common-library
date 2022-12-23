@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.alertingService = exports.AlertingService = void 0;
+exports.AlertingService = void 0;
 var _configs_1 = require("../configs");
 var log_service_1 = require("./log.service");
 var node_telegram_bot_api_1 = __importDefault(require("node-telegram-bot-api"));
@@ -120,4 +120,3 @@ var AlertingService = /** @class */ (function () {
     return AlertingService;
 }());
 exports.AlertingService = AlertingService;
-exports.alertingService = new AlertingService();

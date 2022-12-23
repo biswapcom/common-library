@@ -55,7 +55,4 @@ export class AlertingService {
             logService.error(`Alerting service cannot send message. ${e.toString()}`);
         }
     }
-
 }
-
-export const alertingService = new AlertingService();
