@@ -85,45 +85,41 @@ var _services_1 = require("../services");
  */
 function RetryHelper(retries) {
     if (retries === void 0) { retries = 5; }
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            /**
-             * @param fn - function that you want to run with retry
-             * @param middlewareFn (optional) - function that will run between retries
-             * @param options (optional) - options for retry module (retries, maxTimeout etc.)
-             * @return {Promise<unknown>}
-             */
-            return [2 /*return*/, function withRetry(fn, middlewareFn, options) {
-                    if (middlewareFn === void 0) { middlewareFn = null; }
-                    if (options === void 0) { options = {}; }
-                    return __awaiter(this, void 0, void 0, function () {
-                        var _this = this;
+    /**
+     * @param fn - function that you want to run with retry
+     * @param middlewareFn (optional) - function that will run between retries
+     * @param options (optional) - options for retry module (retries, maxTimeout etc.)
+     * @return {Promise<unknown>}
+     */
+    return function withRetry(fn, middlewareFn, options) {
+        if (middlewareFn === void 0) { middlewareFn = null; }
+        if (options === void 0) { options = {}; }
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, retry(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var err_1;
                         return __generator(this, function (_a) {
-                            return [2 /*return*/, retry(function () { return __awaiter(_this, void 0, void 0, function () {
-                                    var err_1;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                _a.trys.push([0, 2, , 5]);
-                                                return [4 /*yield*/, fn()];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                            case 2:
-                                                err_1 = _a.sent();
-                                                _services_1.logService.info("Retry ERROR::".concat(err_1));
-                                                if (!(middlewareFn instanceof Function)) return [3 /*break*/, 4];
-                                                return [4 /*yield*/, middlewareFn()];
-                                            case 3:
-                                                _a.sent();
-                                                _a.label = 4;
-                                            case 4: throw Error(err_1.toString());
-                                            case 5: return [2 /*return*/];
-                                        }
-                                    });
-                                }); }, __assign({ retries: retries, minTimeout: 100, maxTimeout: 200 }, options))];
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 5]);
+                                    return [4 /*yield*/, fn()];
+                                case 1: return [2 /*return*/, _a.sent()];
+                                case 2:
+                                    err_1 = _a.sent();
+                                    _services_1.logService.info("Retry ERROR::".concat(err_1));
+                                    if (!(middlewareFn instanceof Function)) return [3 /*break*/, 4];
+                                    return [4 /*yield*/, middlewareFn()];
+                                case 3:
+                                    _a.sent();
+                                    _a.label = 4;
+                                case 4: throw Error(err_1.toString());
+                                case 5: return [2 /*return*/];
+                            }
                         });
-                    });
-                }];
+                    }); }, __assign({ retries: retries, minTimeout: 100, maxTimeout: 200 }, options))];
+            });
         });
-    });
+    };
 }
 exports.RetryHelper = RetryHelper;

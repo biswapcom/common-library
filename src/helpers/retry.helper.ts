@@ -12,7 +12,7 @@ import {logService} from "@services";
  * @constructor
  */
 
-export async function RetryHelper(retries: number = 5) {
+export function RetryHelper(retries: number = 5): Function {
     /**
      * @param fn - function that you want to run with retry
      * @param middlewareFn (optional) - function that will run between retries

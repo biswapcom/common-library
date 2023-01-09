@@ -8,4 +8,4 @@
  * @param retries - count of retries
  * @constructor
  */
-export declare function RetryHelper(retries?: number): Promise<(fn: any, middlewareFn?: Function | null, options?: {}) => Promise<any>>;
+export declare function RetryHelper(retries?: number): Function;
