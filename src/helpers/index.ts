@@ -3,6 +3,7 @@ import { defaultChainId } from "@configs";
 import { DEFAULT_REFERRAL_ADDRESS } from "@constants";
 
 export * from './big-number.helper';
+export * from './retry.helper';
 
 /**
  * @param {number} ms - Milliseconds

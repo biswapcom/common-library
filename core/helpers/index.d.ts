@@ -1,5 +1,6 @@
 import { ChainId } from "../enums";
 export * from './big-number.helper';
+export * from './retry.helper';
 /**
  * @param {number} ms - Milliseconds
  * @returns {Promise<void>}
