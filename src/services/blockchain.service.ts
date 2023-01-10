@@ -1,17 +1,17 @@
-import { AbiItem } from "web3-utils";
-import { AddAccount, AddedAccount } from "web3-core";
-import { ContractDb, MulticallCall, Pair } from "@types";
+import { AbiItem } from 'web3-utils';
+import { AddAccount, AddedAccount } from 'web3-core';
+import { ContractDb, MulticallCall, Pair } from '@types';
 import { Interface } from '@ethersproject/abi';
-import { Contract } from "web3-eth-contract";
-import { toBN } from "@helpers";
-import { ChainId } from "@enums";
-import { defaultChainId, web3Config } from "@configs";
-import { logService, requestService as request } from "@services";
-import { INIT_CODE_HASH } from "@constants";
-import { Db } from "mongodb";
-import BN from "bignumber.js";
-import Web3 from "web3";
-import * as tokens from "@constants/tokens";
+import { Contract } from 'web3-eth-contract';
+import { toBN } from '@helpers';
+import { ChainId } from '@enums';
+import { defaultChainId, web3Config } from '@configs';
+import { logService, requestService as request } from '@services';
+import { INIT_CODE_HASH } from '@constants';
+import { Db } from 'mongodb';
+import BN from 'bignumber.js';
+import Web3 from 'web3';
+import * as tokens from '@constants/tokens';
 
 BN.config({ EXPONENTIAL_AT: 1000000000 });
 
@@ -33,7 +33,7 @@ export class BlockchainService {
             return this.web3;
         }
 
-        const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], { timeout: 6000 })
+        const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], { timeout: 6000 });
         this.web3 = new Web3(provider);
 
         // to avoid error "Number can only safely store up to 53 bits web3"
@@ -43,7 +43,7 @@ export class BlockchainService {
             } catch (e) {
                 return 0;
             }
-        }
+        };
 
         return this.web3;
     }
@@ -96,9 +96,33 @@ export class BlockchainService {
      * @return {Contract}
      */
     async getEthContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<Contract> {
-        const contract: ContractDb = await this.getContractByAddress(address, chainId)
+        const contract: ContractDb = await this.getContractByAddress(address, chainId);
 
         return this.getEthContract(contract.abi, contract.address);
+    }
+
+    /**
+     * Ether ERC-721 contract object by token address.
+     *
+     * @param [address] - Token address
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
+     */
+    async getErc721Contract(address: string, chainId: ChainId = defaultChainId): Promise<Contract> {
+        const erc721 = await this.getContractByName('erc721', chainId);
+
+        return this.getEthContract(erc721.abi, address, chainId);
+    }
+
+    /**
+     * Ether ERC-20 contract object by token address.
+     *
+     * @param [address] - Token address
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
+     */
+    async getErc20Contract(address: string, chainId: ChainId = defaultChainId): Promise<Contract> {
+        const erc20 = await this.getContractByName('erc20', chainId);
+
+        return this.getEthContract(erc20.abi, address, chainId);
     }
 
     /**
@@ -203,7 +227,7 @@ export class BlockchainService {
                 return '0';
             }
 
-            [ reserveA, reserveB ] = [ toBN(pair.reserveA), toBN(pair.reserveB) ];
+            [reserveA, reserveB] = [toBN(pair.reserveA), toBN(pair.reserveB)];
 
             coreTokenAmount = (pair.tokenA === tokenFrom) ? amount.multipliedBy(reserveB).div(reserveA) : amount.multipliedBy(reserveA).div(reserveB);
             coreToken = pair.tokenA === tokenFrom ? pair.tokenB : pair.tokenA;
@@ -213,14 +237,14 @@ export class BlockchainService {
             return coreTokenAmount.toString(10);
         }
 
-        const corePairTokens = [ coreToken, coreTokens.USDT ].sort();
+        const corePairTokens = [coreToken, coreTokens.USDT].sort();
         const corePair = await this.getCorePair(corePairTokens[0], corePairTokens[1], chainId);
 
         if (!corePair) {
             return '0';
         }
 
-        [ reserveA, reserveB ] = [ toBN(corePair.reserveA), toBN(corePair.reserveB) ];
+        [reserveA, reserveB] = [toBN(corePair.reserveA), toBN(corePair.reserveB)];
 
         const usdtAmount = (corePair.tokenA === coreToken)
             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
@@ -243,7 +267,7 @@ export class BlockchainService {
         if (this.db) {
             const corePair = await this.db.collection('pairs').findOne({
                 tokenA: tokenA.toLowerCase(),
-                tokenB: tokenB.toLowerCase(),
+                tokenB: tokenB.toLowerCase()
                 // chainId
             });
 
@@ -270,20 +294,20 @@ export class BlockchainService {
             const tokensQuery = {
                 // chainId,
                 $or: coreTokens.map(tokenAddress => {
-                    const tokens = [ tokenFrom.toLowerCase(), tokenAddress.toLowerCase() ].sort();
+                    const tokens = [tokenFrom.toLowerCase(), tokenAddress.toLowerCase()].sort();
 
                     return {
                         tokenA: tokens[0],
                         tokenB: tokens[1],
-                        swaps: { $gt: 50 },
+                        swaps: { $gt: 50 }
                     };
                 })
             };
 
-            const [ pair ] = await this.db.collection('pairs').find(tokensQuery)
+            const [pair] = await this.db.collection('pairs').find(tokensQuery)
                 .sort({ swaps: -1 })
                 .limit(1)
-                .toArray()
+                .toArray();
 
             if (pair) {
                 return pair as Pair;
@@ -306,7 +330,7 @@ export class BlockchainService {
 
         const callData = calls.map((call: MulticallCall) => [
             call.address.toLowerCase(),
-            callableAbi.encodeFunctionData(call.name, call.params),
+            callableAbi.encodeFunctionData(call.name, call.params)
         ]);
 
         try {
@@ -339,7 +363,7 @@ export class BlockchainService {
             calls.push({
                 address: farm['address'],
                 name: 'poolInfo',
-                params: [ poolIndex ]
+                params: [poolIndex]
             });
         }
 
@@ -359,16 +383,16 @@ export class BlockchainService {
      */
     async getPairAddress(tokenA: string, tokenB: string, chainId: ChainId = defaultChainId): Promise<string> {
         const web3 = this.getWeb3(chainId);
-        const [ token0, token1 ] = tokenA < tokenB ? [ tokenA, tokenB ] : [ tokenB, tokenA ];
+        const [token0, token1] = tokenA < tokenB ? [tokenA, tokenB] : [tokenB, tokenA];
 
-        const abiEncoded1 = web3.eth.abi.encodeParameters([ 'address', 'address' ], [ token0, token1 ])
+        const abiEncoded1 = web3.eth.abi.encodeParameters(['address', 'address'], [token0, token1])
             .split('0'.repeat(24))
             .join('');
 
         const salt = web3.utils.soliditySha3(abiEncoded1);
         const factory: ContractDb = await this.getContractByName('factory', chainId);
 
-        const abiEncoded2 = web3.eth.abi.encodeParameters([ 'address', 'bytes32' ], [ factory.address, salt ])
+        const abiEncoded2 = web3.eth.abi.encodeParameters(['address', 'bytes32'], [factory.address, salt])
             .split('0'.repeat(24))
             .join('')
             .substring(2);

@@ -1,10 +1,10 @@
-import { AbiItem } from "web3-utils";
-import { AddAccount, AddedAccount } from "web3-core";
-import { ContractDb, MulticallCall, Pair } from "../types";
-import { Contract } from "web3-eth-contract";
-import { ChainId } from "../enums";
-import { Db } from "mongodb";
-import Web3 from "web3";
+import { AbiItem } from 'web3-utils';
+import { AddAccount, AddedAccount } from 'web3-core';
+import { ContractDb, MulticallCall, Pair } from '../types';
+import { Contract } from 'web3-eth-contract';
+import { ChainId } from '../enums';
+import { Db } from 'mongodb';
+import Web3 from 'web3';
 /**
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
  */
@@ -50,6 +50,20 @@ export declare class BlockchainService {
      * @return {Contract}
      */
     getEthContractByAddress(address: string, chainId?: ChainId): Promise<Contract>;
+    /**
+     * Ether ERC-721 contract object by token address.
+     *
+     * @param [address] - Token address
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
+     */
+    getErc721Contract(address: string, chainId?: ChainId): Promise<Contract>;
+    /**
+     * Ether ERC-20 contract object by token address.
+     *
+     * @param [address] - Token address
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
+     */
+    getErc20Contract(address: string, chainId?: ChainId): Promise<Contract>;
     /**
      * DB Contract by name
      *

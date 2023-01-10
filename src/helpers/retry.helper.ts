@@ -1,5 +1,5 @@
-import retry from 'async-retry'
-import {logService} from "@services";
+import retry from 'async-retry';
+import { logService } from '@services';
 
 /**
  * @example
@@ -19,7 +19,7 @@ export function RetryHelper(retries: number = 5): Function {
      * @param options (optional) - options for retry module (retries, maxTimeout etc.)
      * @return {Promise<unknown>}
      */
-    return async function withRetry(fn, middlewareFn: Function | null = null, options = {}){
+    return async function withRetry(fn, middlewareFn: Function | null = null, options = {}) {
         return retry(async () => {
             try {
                 return await fn();
@@ -28,6 +28,6 @@ export function RetryHelper(retries: number = 5): Function {
                 if (middlewareFn instanceof Function) await middlewareFn();
                 throw Error(err.toString());
             }
-        }, {retries: retries, minTimeout: 100, maxTimeout: 200, ...options});
-    }
+        }, { retries: retries, minTimeout: 100, maxTimeout: 200, ...options });
+    };
 }

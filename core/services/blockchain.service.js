@@ -170,6 +170,46 @@ var BlockchainService = /** @class */ (function () {
         });
     };
     /**
+     * Ether ERC-721 contract object by token address.
+     *
+     * @param [address] - Token address
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
+     */
+    BlockchainService.prototype.getErc721Contract = function (address, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var erc721;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getContractByName('erc721', chainId)];
+                    case 1:
+                        erc721 = _a.sent();
+                        return [2 /*return*/, this.getEthContract(erc721.abi, address, chainId)];
+                }
+            });
+        });
+    };
+    /**
+     * Ether ERC-20 contract object by token address.
+     *
+     * @param [address] - Token address
+     * @param [chainId] - Chain ID to connect to the correct blockchain network
+     */
+    BlockchainService.prototype.getErc20Contract = function (address, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var erc20;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getContractByName('erc20', chainId)];
+                    case 1:
+                        erc20 = _a.sent();
+                        return [2 /*return*/, this.getEthContract(erc20.abi, address, chainId)];
+                }
+            });
+        });
+    };
+    /**
      * DB Contract by name
      *
      * @param {string} name - Name of contract in DB
@@ -335,7 +375,7 @@ var BlockchainService = /** @class */ (function () {
                         if (!this.db) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.db.collection('pairs').findOne({
                                 tokenA: tokenA.toLowerCase(),
-                                tokenB: tokenB.toLowerCase(),
+                                tokenB: tokenB.toLowerCase()
                                 // chainId
                             })];
                     case 1:
@@ -372,7 +412,7 @@ var BlockchainService = /** @class */ (function () {
                                 return {
                                     tokenA: tokens[0],
                                     tokenB: tokens[1],
-                                    swaps: { $gt: 50 },
+                                    swaps: { $gt: 50 }
                                 };
                             })
                         };
@@ -408,7 +448,7 @@ var BlockchainService = /** @class */ (function () {
                         callableAbi = new abi_1.Interface(ABI);
                         callData = calls.map(function (call) { return [
                             call.address.toLowerCase(),
-                            callableAbi.encodeFunctionData(call.name, call.params),
+                            callableAbi.encodeFunctionData(call.name, call.params)
                         ]; });
                         _a.label = 1;
                     case 1:

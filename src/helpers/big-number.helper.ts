@@ -38,6 +38,14 @@ export const valueToFixed = (value: BN | string | number, decimalPlaces: number 
     return toBN(value).div(1e18).toFixed(decimalPlaces, roundingMode);
 }
 
+export const weiToFixed = (value: BN | string | number, decimalPlaces: number = 6, roundingMode?: BN.RoundingMode): string => {
+    if (typeof value === 'object') {
+        return value.div(1e18).toFixed(decimalPlaces, roundingMode);
+    }
+
+    return toBN(value).div(1e18).toFixed(decimalPlaces, roundingMode);
+}
+
 /**
  * Representing the Wei in natural number
  *
