@@ -401,6 +401,22 @@ export class BlockchainService {
     }
 
     /**
+     * Get pair address by tokens addresses
+     *
+     * @param {string} pairAddress - Address of pair
+     * @param {number} chainId – Chain ID to connect to the correct blockchain network
+     *
+     * @return {Pair} - Pair
+     */
+    async getPairByAddress(pairAddress: string, chainId: ChainId = defaultChainId): Promise<Pair | null> {
+        if (!this.db){
+            throw Error(`getPairByAddress:: call 'setDb' is required`)
+        }
+        const pair = await this.db.collection('pairs').findOne({ pairAddress: pairAddress.toLowerCase() });
+        return pair as Pair;
+    }
+
+    /**
      * List of core tokens
      *
      * @param {number} chainId

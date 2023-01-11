@@ -543,6 +543,32 @@ var BlockchainService = /** @class */ (function () {
         });
     };
     /**
+     * Get pair address by tokens addresses
+     *
+     * @param {string} pairAddress - Address of pair
+     * @param {number} chainId – Chain ID to connect to the correct blockchain network
+     *
+     * @return {Pair} - Pair
+     */
+    BlockchainService.prototype.getPairByAddress = function (pairAddress, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var pair;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this.db) {
+                            throw Error("getPairByAddress:: call 'setDb' is required");
+                        }
+                        return [4 /*yield*/, this.db.collection('pairs').findOne({ pairAddress: pairAddress.toLowerCase() })];
+                    case 1:
+                        pair = _a.sent();
+                        return [2 /*return*/, pair];
+                }
+            });
+        });
+    };
+    /**
      * List of core tokens
      *
      * @param {number} chainId

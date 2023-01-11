@@ -132,6 +132,15 @@ export declare class BlockchainService {
      */
     getPairAddress(tokenA: string, tokenB: string, chainId?: ChainId): Promise<string>;
     /**
+     * Get pair address by tokens addresses
+     *
+     * @param {string} pairAddress - Address of pair
+     * @param {number} chainId – Chain ID to connect to the correct blockchain network
+     *
+     * @return {Pair} - Pair
+     */
+    getPairByAddress(pairAddress: string, chainId?: ChainId): Promise<Pair | null>;
+    /**
      * List of core tokens
      *
      * @param {number} chainId
