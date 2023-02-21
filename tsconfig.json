@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es2020", "es2019", "es2018", "es2017", "es7", "es6"],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true ,
+    "declaration": true,
+
+    "baseUrl": "./",
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "allowJs": true,
+    "sourceMap": false,
+    "outDir": "./core",
+    "rootDir": "./src",
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@configs": [ "./src/configs" ],
+      "@configs/*": [ "./src/configs/*" ],
+      "@constants": [ "./src/constants" ],
+      "@constants/*": [ "./src/constants/*" ],
+      "@enums": [ "./src/enums" ],
+      "@enums/*": [ "./src/enums/*" ],
+      "@helpers": [ "./src/helpers" ],
+      "@helpers/*": [ "./src/helpers/*" ],
+      "@types": [ "./src/types" ],
+      "@types/*": [ "./src/types/*" ],
+      "@services": [ "./src/services" ],
+      "@services/*": [ "./src/services/*" ],
+      "@src/*": [ "./src/*" ],
+    },
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests"
+  ],
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  }
+}

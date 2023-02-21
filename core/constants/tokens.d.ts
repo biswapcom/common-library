@@ -1,0 +1,15 @@
+import { TokenMap } from '../types';
+export declare const CAKE: TokenMap;
+export declare const BFG: TokenMap;
+export declare const BABY: TokenMap;
+export declare const BANANA: TokenMap;
+export declare const BSW: TokenMap;
+export declare const BTCB: TokenMap;
+export declare const BUSD: TokenMap;
+export declare const DAI: TokenMap;
+export declare const ETH: TokenMap;
+export declare const EXOS: TokenMap;
+export declare const USDT: TokenMap;
+export declare const LTC: TokenMap;
+export declare const USDC: TokenMap;
+export declare const WBNB: TokenMap;
