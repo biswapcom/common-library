@@ -18,6 +18,7 @@ var WithdrawalType;
     WithdrawalType["Farm"] = "farm";
     WithdrawalType["Pool"] = "pool";
     WithdrawalType["Swap"] = "swap";
+    WithdrawalType["V3Swap"] = "v3Swap";
     // R.I.P. types
     WithdrawalType["Distribution"] = "distribution";
     WithdrawalType["Squid"] = "squid";

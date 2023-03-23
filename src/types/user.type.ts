@@ -13,6 +13,7 @@ export interface User {
     address: string;
     balanceDistribution: string;
     balanceSwap: string;
+    balanceSwapV3: string;
     balancePool: string;
     balanceFarm: string;
     balanceStakedTokens: string;
@@ -26,6 +27,7 @@ export interface User {
 
     /** Total user swap volume in USDT */
     statsVolumeSwap: string;
+    statsVolumeSwapV3: string;
 
     autoPoolShares: string;
     chainId?: number;

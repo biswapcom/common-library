@@ -4,6 +4,7 @@ export declare enum BalanceAction {
 }
 export declare enum BalanceType {
     Swap = "swap",
+    V3Swap = "v3Swap",
     Farm = "farm",
     Pool = "pool",
     Competition = "competition",
