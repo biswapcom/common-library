@@ -23,6 +23,10 @@ export const oneBN = (): BN => {
     return toBN(1e18.toString());
 }
 
+export const zeroBN = (): BN => {
+    return toBN(0);
+}
+
 /**
  * Representing the value in natural (fixed-point) notation rounded to `decimalPlaces` decimal places and divided by 1e18.
  *

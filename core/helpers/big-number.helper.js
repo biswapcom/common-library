@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.weiToNumber = exports.weiToFixed = exports.valueToFixed = exports.oneBN = exports.multiPlus = exports.toBN = void 0;
+exports.weiToNumber = exports.weiToFixed = exports.valueToFixed = exports.zeroBN = exports.oneBN = exports.multiPlus = exports.toBN = void 0;
 var bignumber_js_1 = __importDefault(require("bignumber.js"));
 bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
 var toBN = function (value) {
@@ -30,6 +30,10 @@ var oneBN = function () {
     return (0, exports.toBN)(1e18.toString());
 };
 exports.oneBN = oneBN;
+var zeroBN = function () {
+    return (0, exports.toBN)(0);
+};
+exports.zeroBN = zeroBN;
 /**
  * Representing the value in natural (fixed-point) notation rounded to `decimalPlaces` decimal places and divided by 1e18.
  *

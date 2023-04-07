@@ -14,10 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ONE_BN = exports.ZERO_BN = exports.INIT_CODE_HASH = void 0;
-var _helpers_1 = require("../helpers");
+exports.INIT_CODE_HASH = void 0;
 __exportStar(require("./addresses"), exports);
 __exportStar(require("./tokens"), exports);
 exports.INIT_CODE_HASH = '0xfea293c909d87cd4153593f077b76bb7e94340200f4ee84211ae8e4f9bd7ffdf';
-exports.ZERO_BN = (0, _helpers_1.toBN)(0);
-exports.ONE_BN = (0, _helpers_1.toBN)(1e18.toString());
