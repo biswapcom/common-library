@@ -7,6 +7,9 @@ import { blockchainService } from "@services";
 const EthDater = require('ethereum-block-by-date');
 
 
+/**
+ * Returns UTC timestamps for 24h ago, 48h ago, 7d ago and 14d ago relative to current date and time.
+ */
 export const getDeltaTimestamps = (): DeltaTime => {
     const utcCurrentTime = getUnixTime(new Date()) * 1000;
 
@@ -24,6 +27,9 @@ export const getBlockDater = async (date: Date | Moment): Promise<BlockDater> =>
     return dater.getDate(date, true, true);
 }
 
+/**
+ * Returns block numbers for now, 24h ago, 48h ago, 7d ago and 14d ago relative to current date and time.
+ */
 export const getBlockNumbersByPeriods = async (): Promise<DeltaTime> => {
     const [now, t24h, t48h, t7d, t14d] = await Promise.all([
         getBlockDater(moment()),

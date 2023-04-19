@@ -44,6 +44,9 @@ var moment_1 = __importDefault(require("moment"));
 var date_fns_1 = require("date-fns");
 var _services_1 = require("../services");
 var EthDater = require('ethereum-block-by-date');
+/**
+ * Returns UTC timestamps for 24h ago, 48h ago, 7d ago and 14d ago relative to current date and time.
+ */
 var getDeltaTimestamps = function () {
     var utcCurrentTime = (0, date_fns_1.getUnixTime)(new Date()) * 1000;
     var t24h = (0, date_fns_1.getUnixTime)((0, date_fns_1.startOfMinute)((0, date_fns_1.subDays)(utcCurrentTime, 1)));
@@ -61,6 +64,9 @@ var getBlockDater = function (date) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.getBlockDater = getBlockDater;
+/**
+ * Returns block numbers for now, 24h ago, 48h ago, 7d ago and 14d ago relative to current date and time.
+ */
 var getBlockNumbersByPeriods = function () { return __awaiter(void 0, void 0, void 0, function () {
     var _a, now, t24h, t48h, t7d, t14d;
     return __generator(this, function (_b) {
