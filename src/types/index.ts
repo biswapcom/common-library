@@ -1,3 +1,5 @@
+import { getBlockDater } from "@helpers/time.helper";
+
 export * from './balance.type'
 export * from './blockchain.type';
 export * from './pair.type';
@@ -19,3 +21,17 @@ export type LoggerOptions = {
 }
 
 export type CliArgumentValueType = string | number | boolean;
+
+export interface DeltaTime {
+    now?: number;
+    t24h: number;
+    t48h: number;
+    t7d: number;
+    t14d: number;
+}
+
+export interface BlockDater {
+    date: string | Date;
+    block: number;
+    timestamp: number;
+}

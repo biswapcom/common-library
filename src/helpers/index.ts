@@ -6,6 +6,7 @@ export * from './array.helper';
 export * from './big-number.helper';
 export * from './cli.helper';
 export * from './retry.helper';
+export * from './time.helper';
 
 /**
  * @param {number} ms - Milliseconds
