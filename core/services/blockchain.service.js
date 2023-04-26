@@ -310,8 +310,9 @@ var BlockchainService = /** @class */ (function () {
      *
      * @return {string} - USDT in Wei
      */
-    BlockchainService.prototype.exchangeTokenToUSDT = function (amountFrom, tokenFrom, chainId) {
+    BlockchainService.prototype.exchangeTokenToUSDT = function (amountFrom, tokenFrom, chainId, decimalPlaces) {
         if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        if (decimalPlaces === void 0) { decimalPlaces = 0; }
         return __awaiter(this, void 0, void 0, function () {
             var amount, coreTokens, reserveA, reserveB, coreTokenAmount, coreToken, pair, corePairTokens, corePair, usdtAmount;
             var _a, _b;
@@ -337,7 +338,7 @@ var BlockchainService = /** @class */ (function () {
                         _c.label = 3;
                     case 3:
                         if (coreToken === coreTokens.USDT) {
-                            return [2 /*return*/, coreTokenAmount.toFixed(0)];
+                            return [2 /*return*/, coreTokenAmount.toFixed(decimalPlaces)];
                         }
                         corePairTokens = [coreToken, coreTokens.USDT].sort();
                         return [4 /*yield*/, this.getCorePair(corePairTokens[0], corePairTokens[1], chainId)];
@@ -350,7 +351,7 @@ var BlockchainService = /** @class */ (function () {
                         usdtAmount = (corePair.tokenA === coreToken)
                             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
                             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
-                        return [2 /*return*/, usdtAmount.toFixed(0)];
+                        return [2 /*return*/, usdtAmount.toFixed(decimalPlaces)];
                 }
             });
         });
