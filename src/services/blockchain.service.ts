@@ -206,7 +206,7 @@ export class BlockchainService {
      *
      * @return {string} - USDT in Wei
      */
-    async exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId: ChainId = defaultChainId): Promise<string> {
+    async exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId: ChainId = defaultChainId, decimalPlaces: number = 0): Promise<string> {
         const amount = toBN(amountFrom);
         const coreTokens = this.getCoreTokens(chainId);
 
@@ -234,7 +234,7 @@ export class BlockchainService {
         }
 
         if (coreToken === coreTokens.USDT) {
-            return coreTokenAmount.toFixed(0);
+            return coreTokenAmount.toFixed(decimalPlaces);
         }
 
         const corePairTokens = [coreToken, coreTokens.USDT].sort();
@@ -250,7 +250,7 @@ export class BlockchainService {
             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
 
-        return usdtAmount.toFixed(0);
+        return usdtAmount.toFixed(decimalPlaces);
     }
 
     /**
