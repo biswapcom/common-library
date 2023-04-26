@@ -100,7 +100,7 @@ export declare class BlockchainService {
      *
      * @return {string} - USDT in Wei
      */
-    exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
+    exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId, decimalPlaces?: number): Promise<string>;
     /**
      * Core pair by token addresses
      *
