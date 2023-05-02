@@ -2,7 +2,7 @@ import BN from "bignumber.js";
 export declare const toBN: (value: string | number) => BN;
 export declare const multiPlus: (...values: string[] | number[]) => BN;
 /**
- * 1000000000000000000 in BigNumber
+ * 10^decimals in BigNumber
  */
 export declare const oneBN: (decimals?: number) => BN;
 export declare const zeroBN: () => BN;
@@ -30,7 +30,9 @@ export declare const weiToNumber: (value: BN | string) => number;
  */
 export declare const amountToFixed: (amount: string | number, decimals?: number, decimalPlaces?: number) => string;
 /**
+ * Token amount multiple by 1 ** decimals.
+ *
  * @param [amount] - Token amount.
  * @param [decimals] - Token decimals.
  */
-export declare const amountToBN: (amount: string | number, decimals?: number) => BN;
+export declare const amountToBN: (amount: string | number | BN, decimals?: number) => BN;

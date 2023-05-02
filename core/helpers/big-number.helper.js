@@ -85,11 +85,16 @@ var amountToFixed = function (amount, decimals, decimalPlaces) {
 };
 exports.amountToFixed = amountToFixed;
 /**
+ * Token amount multiple by 1 ** decimals.
+ *
  * @param [amount] - Token amount.
  * @param [decimals] - Token decimals.
  */
 var amountToBN = function (amount, decimals) {
     if (decimals === void 0) { decimals = 18; }
+    if (typeof amount === 'object') {
+        return amount.times(Math.pow(10, decimals));
+    }
     return (0, exports.toBN)(amount).times(Math.pow(10, decimals));
 };
 exports.amountToBN = amountToBN;

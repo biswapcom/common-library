@@ -1,4 +1,5 @@
 import BN from "bignumber.js";
+import { isBigNumber } from "web3-utils";
 
 BN.config({ EXPONENTIAL_AT: 1000000000 });
 
@@ -72,13 +73,19 @@ export const weiToNumber = (value: BN | string): number => {
  * @param decimalPlaces
  */
 export const amountToFixed = (amount: string|number, decimals = 18, decimalPlaces: number = 6): string => {
-   return  toBN(amount).div(10**decimals).toFixed(decimalPlaces);
+   return toBN(amount).div(10**decimals).toFixed(decimalPlaces);
 }
 
 /**
+ * Token amount multiple by 1 ** decimals.
+ *
  * @param [amount] - Token amount.
  * @param [decimals] - Token decimals.
  */
-export const amountToBN = (amount: string|number, decimals = 18): BN => {
-    return  toBN(amount).times(10**decimals);
+export const amountToBN = (amount: string|number|BN, decimals = 18): BN => {
+    if (typeof amount === 'object') {
+        return amount.times(10**decimals);
+    }
+
+    return toBN(amount).times(10**decimals);
 }
