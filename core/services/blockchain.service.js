@@ -63,6 +63,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blockchainService = exports.BlockchainService = void 0;
+var _ = __importStar(require("lodash"));
 var abi_1 = require("@ethersproject/abi");
 var _helpers_1 = require("../helpers");
 var _configs_1 = require("../configs");
@@ -77,7 +78,86 @@ bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
  */
 var BlockchainService = /** @class */ (function () {
     function BlockchainService() {
+        this.transparentContractName = 'transparent_upgradeable_proxy';
     }
+    BlockchainService.prototype.getTransparentContract = function (chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!!this.transparentContract) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.getEthContractByName(this.transparentContractName, chainId)];
+                    case 1:
+                        _a.transparentContract = _b.sent();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this.transparentContract];
+                }
+            });
+        });
+    };
+    /**
+     * Get amount of input token in USDT for V2 and V3 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    BlockchainService.prototype.getAmountUsd = function (amountFrom, tokenFrom, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var contract;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getTransparentContract(chainId)];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(_.first)];
+                }
+            });
+        });
+    };
+    /**
+     * Get amount of input token in USDT for V2 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    BlockchainService.prototype.getAmountUsdV2 = function (amountFrom, tokenFrom, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var contract;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getTransparentContract(chainId)];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, contract.methods.consultV2(tokenFrom, amountFrom, tokens.USDT[chainId].address).call()];
+                }
+            });
+        });
+    };
+    /**
+     * Get best amount of input token in USDT for V3 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    BlockchainService.prototype.getAmountUsdV3 = function (amountFrom, tokenFrom, chainId) {
+        if (chainId === void 0) { chainId = _configs_1.defaultChainId; }
+        return __awaiter(this, void 0, void 0, function () {
+            var contract;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getTransparentContract(chainId)];
+                    case 1:
+                        contract = _a.sent();
+                        return [2 /*return*/, contract.methods.consultV3(tokenFrom, amountFrom, tokens.USDT[chainId].address).call()];
+                }
+            });
+        });
+    };
     /**
      * Web3 HTTP-provider
      *
