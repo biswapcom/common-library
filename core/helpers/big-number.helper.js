@@ -4,20 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.amountToBN = exports.amountToFixed = exports.weiToNumber = exports.weiToFixed = exports.valueToFixed = exports.zeroBN = exports.oneBN = exports.multiPlus = exports.toBN = void 0;
-var bignumber_js_1 = __importDefault(require("bignumber.js"));
+const bignumber_js_1 = __importDefault(require("bignumber.js"));
 bignumber_js_1.default.config({ EXPONENTIAL_AT: 1000000000 });
-var toBN = function (value) {
+const toBN = (value) => {
     return new bignumber_js_1.default(value);
 };
 exports.toBN = toBN;
-var multiPlus = function () {
-    var values = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        values[_i] = arguments[_i];
-    }
-    var result = (0, exports.toBN)('0');
-    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
-        var value = values_1[_a];
+const multiPlus = (...values) => {
+    let result = (0, exports.toBN)('0');
+    for (const value of values) {
         result = result.plus((0, exports.toBN)(value));
     }
     return result;
@@ -26,12 +21,11 @@ exports.multiPlus = multiPlus;
 /**
  * 10^decimals in BigNumber
  */
-var oneBN = function (decimals) {
-    if (decimals === void 0) { decimals = 18; }
+const oneBN = (decimals = 18) => {
     return (0, exports.toBN)(10 ^ decimals);
 };
 exports.oneBN = oneBN;
-var zeroBN = function () {
+const zeroBN = () => {
     return (0, exports.toBN)(0);
 };
 exports.zeroBN = zeroBN;
@@ -43,8 +37,7 @@ exports.zeroBN = zeroBN;
  * @param {number} decimalPlaces
  * @param {BN.RoundingMode} roundingMode
  */
-var valueToFixed = function (value, decimalPlaces, roundingMode) {
-    if (decimalPlaces === void 0) { decimalPlaces = 6; }
+const valueToFixed = (value, decimalPlaces = 6, roundingMode) => {
     if (typeof value === 'object') {
         return value.div(1e18).toFixed(decimalPlaces, roundingMode);
     }
@@ -52,8 +45,7 @@ var valueToFixed = function (value, decimalPlaces, roundingMode) {
 };
 exports.valueToFixed = valueToFixed;
 // TODO: apply token decimals
-var weiToFixed = function (value, decimalPlaces, roundingMode) {
-    if (decimalPlaces === void 0) { decimalPlaces = 6; }
+const weiToFixed = (value, decimalPlaces = 6, roundingMode) => {
     if (typeof value === 'object') {
         return value.div(1e18).toFixed(decimalPlaces, roundingMode);
     }
@@ -66,7 +58,7 @@ exports.weiToFixed = weiToFixed;
  *
  * @param [value]
  */
-var weiToNumber = function (value) {
+const weiToNumber = (value) => {
     if (typeof value === 'object') {
         return parseFloat(value.div(1e18).toString());
     }
@@ -78,10 +70,8 @@ exports.weiToNumber = weiToNumber;
  * @param [decimals] - Token decimals.
  * @param decimalPlaces
  */
-var amountToFixed = function (amount, decimals, decimalPlaces) {
-    if (decimals === void 0) { decimals = 18; }
-    if (decimalPlaces === void 0) { decimalPlaces = 6; }
-    return (0, exports.toBN)(amount).div(Math.pow(10, decimals)).toFixed(decimalPlaces);
+const amountToFixed = (amount, decimals = 18, decimalPlaces = 6) => {
+    return (0, exports.toBN)(amount).div(10 ** decimals).toFixed(decimalPlaces);
 };
 exports.amountToFixed = amountToFixed;
 /**
@@ -90,11 +80,10 @@ exports.amountToFixed = amountToFixed;
  * @param [amount] - Token amount.
  * @param [decimals] - Token decimals.
  */
-var amountToBN = function (amount, decimals) {
-    if (decimals === void 0) { decimals = 18; }
+const amountToBN = (amount, decimals = 18) => {
     if (typeof amount === 'object') {
-        return amount.times(Math.pow(10, decimals));
+        return amount.times(10 ** decimals);
     }
-    return (0, exports.toBN)(amount).times(Math.pow(10, decimals));
+    return (0, exports.toBN)(amount).times(10 ** decimals);
 };
 exports.amountToBN = amountToBN;

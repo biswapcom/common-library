@@ -22,17 +22,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultChainId = exports.web3Config = void 0;
-var dotenv = __importStar(require("dotenv"));
-var _enums_1 = require("../enums");
+const dotenv = __importStar(require("dotenv"));
+const _enums_1 = require("../enums");
 dotenv.config();
-exports.web3Config = (_a = {},
-    _a[_enums_1.ChainId.BSC] = {
+exports.web3Config = {
+    [_enums_1.ChainId.BSC]: {
         httpHosts: [
             process.env.BSC_PROVIDER || 'https://bsc-mainnet.nodereal.io/v1/ef269c169b624e28acb38925c0db4e9b'
         ]
-    },
-    _a);
+    }
+};
 exports.defaultChainId = _enums_1.ChainId.BSC;

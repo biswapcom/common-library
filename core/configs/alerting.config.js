@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.alertingConfig = void 0;
-var dotenv = __importStar(require("dotenv"));
+const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 exports.alertingConfig = {
     botAuthKey: process.env.TG_AUTH_KEY,

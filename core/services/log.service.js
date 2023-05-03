@@ -1,23 +1,12 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logService = exports.LogService = void 0;
-var moment_1 = __importDefault(require("moment"));
-var _enums_1 = require("../enums");
-var colors = require('colors');
+const moment_1 = __importDefault(require("moment"));
+const _enums_1 = require("../enums");
+const colors = require('colors');
 colors.setTheme({
     notice: 'gray',
     info: 'white',
@@ -30,8 +19,8 @@ colors.setTheme({
     datetime: 'blue',
     unknown: ['black', 'bgWhite']
 });
-var LogService = /** @class */ (function () {
-    function LogService() {
+class LogService {
+    constructor() {
         this.defaultOptions = {
             newline: 0,
             break: 0,
@@ -45,58 +34,52 @@ var LogService = /** @class */ (function () {
      * @param {string} message
      * @param {LoggerOptions} options
      */
-    LogService.prototype.info = function (message, options) {
-        if (options === void 0) { options = {}; }
+    info(message, options = {}) {
         this.log(_enums_1.LogLevel.Info, message, options);
-    };
+    }
     /**
      * Additional information that should be logged under normal conditions
      *
      * @param {string} message
      * @param {LoggerOptions} options
      */
-    LogService.prototype.notice = function (message, options) {
-        if (options === void 0) { options = {}; }
+    notice(message, options = {}) {
         this.log(_enums_1.LogLevel.Notice, message, options);
-    };
+    }
     /**
      * Information that should be logged after successful operation
      *
      * @param {string} message
      * @param {LoggerOptions} options
      */
-    LogService.prototype.success = function (message, options) {
-        if (options === void 0) { options = {}; }
+    success(message, options = {}) {
         this.log(_enums_1.LogLevel.Success, message, options);
-    };
+    }
     /**
      * This MIGHT be problem, or might not
      *
      * @param {string} message
      * @param {LoggerOptions} options
      */
-    LogService.prototype.warn = function (message, options) {
-        if (options === void 0) { options = {}; }
+    warn(message, options = {}) {
         this.log(_enums_1.LogLevel.Warn, message, options);
-    };
+    }
     /**
      * Definitely a problem that should be investigated
      *
      * @param {string} message
      * @param {LoggerOptions} options
      */
-    LogService.prototype.error = function (message, options) {
-        if (options === void 0) { options = {}; }
+    error(message, options = {}) {
         this.log(_enums_1.LogLevel.Error, message, options);
-    };
+    }
     /**
      * @param {string} message
      * @param {LoggerOptions} options
      */
-    LogService.prototype.debug = function (message, options) {
-        if (options === void 0) { options = {}; }
+    debug(message, options = {}) {
         this.log(_enums_1.LogLevel.Debug, message, options);
-    };
+    }
     /**
      * Output each message from the array in new line
      *
@@ -104,17 +87,13 @@ var LogService = /** @class */ (function () {
      * @param {LoggerOptions} options
      * @param {string} level
      */
-    LogService.prototype.list = function (messages, options, level) {
-        if (options === void 0) { options = {}; }
-        if (level === void 0) { level = _enums_1.LogLevel.Info; }
-        for (var _i = 0, messages_1 = messages; _i < messages_1.length; _i++) {
-            var message = messages_1[_i];
+    list(messages, options = {}, level = _enums_1.LogLevel.Info) {
+        for (const message of messages) {
             this.log(level, message, options);
         }
-    };
-    LogService.prototype.log = function (level, message, options) {
-        if (options === void 0) { options = {}; }
-        var opts = __assign(__assign({}, this.defaultOptions), options);
+    }
+    log(level, message, options = {}) {
+        const opts = { ...this.defaultOptions, ...options };
         switch (level.toLowerCase()) {
             case _enums_1.LogLevel.Notice:
                 message = colors.notice(message);
@@ -151,15 +130,10 @@ var LogService = /** @class */ (function () {
         if (opts.break > 0) {
             console.log('\n'.repeat(opts.break - 1));
         }
-    };
-    Object.defineProperty(LogService.prototype, "time", {
-        get: function () {
-            return colors.datetime("[ ".concat((0, moment_1.default)().format('YYYY.MM.DD HH:mm:ss'), " ]")); // [ 2021.12.13  16:20:25 ]
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return LogService;
-}());
+    }
+    get time() {
+        return colors.datetime(`[ ${(0, moment_1.default)().format('YYYY.MM.DD HH:mm:ss')} ]`); // [ 2021.12.13  16:20:25 ]
+    }
+}
 exports.LogService = LogService;
 exports.logService = new LogService();
