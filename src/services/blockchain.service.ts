@@ -40,7 +40,7 @@ export class BlockchainService {
      */
     async getAmountUsd(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
         const contract = await this.getTransparentContract(chainId);
-        return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(_.first);
+        return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(([v2, v3]) => ({v2, v3}));
     }
 
     /**

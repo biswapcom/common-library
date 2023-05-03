@@ -27,7 +27,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blockchainService = exports.BlockchainService = void 0;
-const _ = __importStar(require("lodash"));
 const abi_1 = require("@ethersproject/abi");
 const _helpers_1 = require("../helpers");
 const _configs_1 = require("../configs");
@@ -58,7 +57,7 @@ class BlockchainService {
      */
     async getAmountUsd(amountFrom, tokenFrom, chainId = _configs_1.defaultChainId) {
         const contract = await this.getTransparentContract(chainId);
-        return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(_.first);
+        return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(([v2, v3]) => ({ v2, v3 }));
     }
     /**
      * Get amount of input token in USDT for V2 protocols
