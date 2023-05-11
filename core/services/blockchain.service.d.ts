@@ -21,6 +21,7 @@ export declare class BlockchainService {
      * @param chainId
      */
     getAmountUsd(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
+    private isUsdt;
     /**
      * Get amount of input token in USDT for V2 protocols
      * @param amountFrom

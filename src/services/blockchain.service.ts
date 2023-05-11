@@ -39,8 +39,13 @@ export class BlockchainService {
      * @param chainId
      */
     async getAmountUsd(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+        if (this.isUsdt(tokenFrom, chainId)) return {v2: amountFrom, v3: amountFrom};
         const contract = await this.getTransparentContract(chainId);
         return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(([v2, v3]) => ({v2, v3}));
+    }
+
+    private isUsdt(tokenAddress: string, chainId=  defaultChainId) {
+        return tokenAddress.toLowerCase() === tokens.USDT[chainId].address.toLowerCase();
     }
 
     /**
@@ -50,6 +55,7 @@ export class BlockchainService {
      * @param chainId
      */
     async getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+        if (this.isUsdt(tokenFrom, chainId)) return amountFrom;
         const contract = await this.getTransparentContract(chainId);
         return contract.methods.consultV2(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
     }
@@ -61,6 +67,7 @@ export class BlockchainService {
      * @param chainId
      */
     async getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+        if (this.isUsdt(tokenFrom, chainId)) return amountFrom;
         const contract = await this.getTransparentContract(chainId);
         return contract.methods.consultV3(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
     }

@@ -56,8 +56,13 @@ class BlockchainService {
      * @param chainId
      */
     async getAmountUsd(amountFrom, tokenFrom, chainId = _configs_1.defaultChainId) {
+        if (this.isUsdt(tokenFrom, chainId))
+            return { v2: amountFrom, v3: amountFrom };
         const contract = await this.getTransparentContract(chainId);
         return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(([v2, v3]) => ({ v2, v3 }));
+    }
+    isUsdt(tokenAddress, chainId = _configs_1.defaultChainId) {
+        return tokenAddress.toLowerCase() === tokens.USDT[chainId].address.toLowerCase();
     }
     /**
      * Get amount of input token in USDT for V2 protocols
@@ -66,6 +71,8 @@ class BlockchainService {
      * @param chainId
      */
     async getAmountUsdV2(amountFrom, tokenFrom, chainId = _configs_1.defaultChainId) {
+        if (this.isUsdt(tokenFrom, chainId))
+            return amountFrom;
         const contract = await this.getTransparentContract(chainId);
         return contract.methods.consultV2(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
     }
@@ -76,6 +83,8 @@ class BlockchainService {
      * @param chainId
      */
     async getAmountUsdV3(amountFrom, tokenFrom, chainId = _configs_1.defaultChainId) {
+        if (this.isUsdt(tokenFrom, chainId))
+            return amountFrom;
         const contract = await this.getTransparentContract(chainId);
         return contract.methods.consultV3(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
     }
