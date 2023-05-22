@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WBNB = exports.USDC = exports.LTC = exports.USDT = exports.EXOS = exports.ETH = exports.DAI = exports.BUSD = exports.BTCB = exports.BSW = exports.BANANA = exports.BABY = exports.BFG = exports.CAKE = void 0;
+exports.WBNB = exports.USDC = exports.UST = exports.USDT = exports.LTC = exports.EXOS = exports.ETH = exports.DAI = exports.BUSD = exports.BTCB = exports.BSW = exports.BANANA = exports.BABY = exports.BFG = exports.CAKE = void 0;
 const _enums_1 = require("../enums");
 exports.CAKE = {
     [_enums_1.ChainId.BSC]: {
@@ -82,6 +82,14 @@ exports.EXOS = {
         core: false
     }
 };
+exports.LTC = {
+    [_enums_1.ChainId.BSC]: {
+        address: '0x412b607f4cBE9CaE77C6F720A701CD60fa0EBD3f',
+        symbol: 'LTC',
+        name: 'BiswapPair',
+        core: true
+    }
+};
 exports.USDT = {
     [_enums_1.ChainId.BSC]: {
         address: '0x55d398326f99059fF775485246999027B3197955',
@@ -90,11 +98,11 @@ exports.USDT = {
         core: true
     }
 };
-exports.LTC = {
+exports.UST = {
     [_enums_1.ChainId.BSC]: {
-        address: '0x412b607f4cBE9CaE77C6F720A701CD60fa0EBD3f',
-        symbol: 'LTC',
-        name: 'BiswapPair',
+        address: '0x23396cf899ca06c4472205fc903bdb4de249d6fc',
+        symbol: 'UST',
+        name: 'Wrapped UST Token',
         core: true
     }
 };
