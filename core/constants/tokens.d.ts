@@ -11,6 +11,6 @@ export declare const ETH: TokenMap;
 export declare const EXOS: TokenMap;
 export declare const LTC: TokenMap;
 export declare const USDT: TokenMap;
-export declare const UST: TokenMap;
 export declare const USDC: TokenMap;
+export declare const UST: TokenMap;
 export declare const WBNB: TokenMap;
