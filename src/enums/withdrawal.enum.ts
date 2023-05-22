@@ -14,6 +14,7 @@ export enum WithdrawalType {
     Farm = 'farm',
     Pool = 'pool',
     Swap = 'swap',
+    V3Swap = 'v3Swap',
 
     // R.I.P. types
     Distribution = 'distribution',

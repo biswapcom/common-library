@@ -91,6 +91,15 @@ export const EXOS: TokenMap = {
     }
 };
 
+export const LTC: TokenMap = {
+    [ChainId.BSC]: {
+        address: '0x412b607f4cBE9CaE77C6F720A701CD60fa0EBD3f',
+        symbol: 'LTC',
+        name: 'Litecoin Token',
+        core: true
+    }
+};
+
 export const USDT: TokenMap = {
     [ChainId.BSC]: {
         address: '0x55d398326f99059fF775485246999027B3197955',
@@ -100,20 +109,20 @@ export const USDT: TokenMap = {
     }
 };
 
-export const LTC: TokenMap = {
-    [ChainId.BSC]: {
-        address: '0x412b607f4cBE9CaE77C6F720A701CD60fa0EBD3f',
-        symbol: 'LTC',
-        name: 'BiswapPair',
-        core: true
-    }
-};
-
 export const USDC: TokenMap = {
     [ChainId.BSC]: {
         address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
         symbol: 'USDC',
         name: 'USD Coin',
+        core: true
+    }
+};
+
+export const UST: TokenMap = {
+    [ChainId.BSC]: {
+        address: '0x23396cf899ca06c4472205fc903bdb4de249d6fc',
+        symbol: 'UST',
+        name: 'Wrapped UST Token',
         core: true
     }
 };

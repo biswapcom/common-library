@@ -11,6 +11,31 @@ import Web3 from 'web3';
 export declare class BlockchainService {
     private web3;
     private db;
+    private transparentContract;
+    private transparentContractName;
+    private getTransparentContract;
+    /**
+     * Get amount of input token in USDT for V2 and V3 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    getAmountUsd(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
+    private isUsdt;
+    /**
+     * Get amount of input token in USDT for V2 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
+    /**
+     * Get best amount of input token in USDT for V3 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
     /**
      * Web3 HTTP-provider
      *
@@ -100,7 +125,7 @@ export declare class BlockchainService {
      *
      * @return {string} - USDT in Wei
      */
-    exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
+    exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId, decimalPlaces?: number): Promise<string>;
     /**
      * Core pair by token addresses
      *

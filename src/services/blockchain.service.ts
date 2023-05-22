@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AbiItem } from 'web3-utils';
 import { AddAccount, AddedAccount } from 'web3-core';
 import { ContractDb, MulticallCall, Pair } from '@types';
@@ -21,6 +22,55 @@ BN.config({ EXPONENTIAL_AT: 1000000000 });
 export class BlockchainService {
     private web3: Web3;
     private db: Db;
+    private transparentContract: Contract;
+    private transparentContractName = 'transparent_upgradeable_proxy'
+
+    private async getTransparentContract(chainId = defaultChainId){
+        if (!this.transparentContract){
+            this.transparentContract = await this.getEthContractByName(this.transparentContractName, chainId);
+        }
+        return this.transparentContract;
+    }
+
+    /**
+     * Get amount of input token in USDT for V2 and V3 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    async getAmountUsd(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+        if (this.isUsdt(tokenFrom, chainId)) return {v2: amountFrom, v3: amountFrom};
+        const contract = await this.getTransparentContract(chainId);
+        return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(([v2, v3]) => ({v2, v3}));
+    }
+
+    private isUsdt(tokenAddress: string, chainId=  defaultChainId) {
+        return tokenAddress.toLowerCase() === tokens.USDT[chainId].address.toLowerCase();
+    }
+
+    /**
+     * Get amount of input token in USDT for V2 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    async getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+        if (this.isUsdt(tokenFrom, chainId)) return amountFrom;
+        const contract = await this.getTransparentContract(chainId);
+        return contract.methods.consultV2(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
+    }
+
+    /**
+     * Get best amount of input token in USDT for V3 protocols
+     * @param amountFrom
+     * @param tokenFrom
+     * @param chainId
+     */
+    async getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+        if (this.isUsdt(tokenFrom, chainId)) return amountFrom;
+        const contract = await this.getTransparentContract(chainId);
+        return contract.methods.consultV3(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
+    }
 
     /**
      * Web3 HTTP-provider
@@ -206,7 +256,7 @@ export class BlockchainService {
      *
      * @return {string} - USDT in Wei
      */
-    async exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId: ChainId = defaultChainId): Promise<string> {
+    async exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId: ChainId = defaultChainId, decimalPlaces: number = 0): Promise<string> {
         const amount = toBN(amountFrom);
         const coreTokens = this.getCoreTokens(chainId);
 
@@ -234,7 +284,7 @@ export class BlockchainService {
         }
 
         if (coreToken === coreTokens.USDT) {
-            return coreTokenAmount.toFixed(0);
+            return coreTokenAmount.toFixed(decimalPlaces);
         }
 
         const corePairTokens = [coreToken, coreTokens.USDT].sort();
@@ -250,7 +300,7 @@ export class BlockchainService {
             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
 
-        return usdtAmount.toFixed(0);
+        return usdtAmount.toFixed(decimalPlaces);
     }
 
     /**

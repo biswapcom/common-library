@@ -5,6 +5,7 @@ export enum BalanceAction {
 
 export enum BalanceType {
     Swap = 'swap',
+    V3Swap = 'v3Swap',
     Farm = 'farm',
     Pool = 'pool',
     Competition = 'competition',

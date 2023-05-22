@@ -9,6 +9,7 @@ var BalanceAction;
 var BalanceType;
 (function (BalanceType) {
     BalanceType["Swap"] = "swap";
+    BalanceType["V3Swap"] = "v3Swap";
     BalanceType["Farm"] = "farm";
     BalanceType["Pool"] = "pool";
     BalanceType["Competition"] = "competition";

@@ -13,6 +13,7 @@ export declare enum WithdrawalType {
     Farm = "farm",
     Pool = "pool",
     Swap = "swap",
+    V3Swap = "v3Swap",
     Distribution = "distribution",
     Squid = "squid",
     Lottery = "lottery"

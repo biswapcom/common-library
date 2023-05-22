@@ -1,4 +1,5 @@
 import BN from "bignumber.js";
+import { isBigNumber } from "web3-utils";
 
 BN.config({ EXPONENTIAL_AT: 1000000000 });
 
@@ -17,14 +18,19 @@ export const multiPlus = (...values: string[] | number[]): BN => {
 }
 
 /**
- * 1000000000000000000 in BigNumber
+ * 10^decimals in BigNumber
  */
-export const oneBN = (): BN => {
-    return toBN(1e18.toString());
+export const oneBN = (decimals = 18): BN => {
+    return toBN(10^decimals);
+}
+
+export const zeroBN = (): BN => {
+    return toBN(0);
 }
 
 /**
  * Representing the value in natural (fixed-point) notation rounded to `decimalPlaces` decimal places and divided by 1e18.
+ * TODO: apply token decimals
  *
  * @param {BN|string|number} value
  * @param {number} decimalPlaces
@@ -38,6 +44,7 @@ export const valueToFixed = (value: BN | string | number, decimalPlaces: number 
     return toBN(value).div(1e18).toFixed(decimalPlaces, roundingMode);
 }
 
+// TODO: apply token decimals
 export const weiToFixed = (value: BN | string | number, decimalPlaces: number = 6, roundingMode?: BN.RoundingMode): string => {
     if (typeof value === 'object') {
         return value.div(1e18).toFixed(decimalPlaces, roundingMode);
@@ -48,6 +55,7 @@ export const weiToFixed = (value: BN | string | number, decimalPlaces: number = 
 
 /**
  * Representing the Wei in natural number
+ * TODO: apply token decimals
  *
  * @param [value]
  */
@@ -57,4 +65,27 @@ export const weiToNumber = (value: BN | string): number => {
     }
 
     return parseFloat(toBN(value).div(1e18).toString());
+}
+
+/**
+ * @param [amount] - Token amount.
+ * @param [decimals] - Token decimals.
+ * @param decimalPlaces
+ */
+export const amountToFixed = (amount: string|number, decimals = 18, decimalPlaces: number = 6): string => {
+   return toBN(amount).div(10**decimals).toFixed(decimalPlaces);
+}
+
+/**
+ * Token amount multiple by 1 ** decimals.
+ *
+ * @param [amount] - Token amount.
+ * @param [decimals] - Token decimals.
+ */
+export const amountToBN = (amount: string|number|BN, decimals = 18): BN => {
+    if (typeof amount === 'object') {
+        return amount.times(10**decimals);
+    }
+
+    return toBN(amount).times(10**decimals);
 }
