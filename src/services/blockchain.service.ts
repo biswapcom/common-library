@@ -1,20 +1,20 @@
 import * as _ from 'lodash';
-import { AbiItem } from 'web3-utils';
-import { AddAccount, AddedAccount } from 'web3-core';
-import { ContractDb, MulticallCall, Pair } from '@types';
-import { Interface } from '@ethersproject/abi';
-import { Contract } from 'web3-eth-contract';
-import { toBN } from '@helpers';
-import { ChainId } from '@enums';
-import { defaultChainId, web3Config } from '@configs';
-import { logService, requestService as request } from '@services';
-import { INIT_CODE_HASH } from '@constants';
-import { Db } from 'mongodb';
+import {AbiItem} from 'web3-utils';
+import {AddAccount, AddedAccount} from 'web3-core';
+import {ContractDb, MulticallCall, Pair} from '@types';
+import {Interface} from '@ethersproject/abi';
+import {Contract} from 'web3-eth-contract';
+import {toBN} from '@helpers';
+import {ChainId} from '@enums';
+import {defaultChainId, web3Config} from '@configs';
+import {logService, requestService as request} from '@services';
+import {INIT_CODE_HASH} from '@constants';
+import {Db} from 'mongodb';
 import BN from 'bignumber.js';
 import Web3 from 'web3';
 import * as tokens from '@constants/tokens';
 
-BN.config({ EXPONENTIAL_AT: 1000000000 });
+BN.config({EXPONENTIAL_AT: 1000000000});
 
 /**
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
@@ -24,27 +24,39 @@ export class BlockchainService {
     private db: Db;
     private transparentContract: Contract;
     private transparentContractName = 'transparent_upgradeable_proxy'
+    private corePairsV2;
+    private corePairsV3;
+    static coreTokens = {
+        DAI: '0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3',
+        BSW: '0x965f527d9159dce6288a2219db51fc6eef120dd1',
+        BUSD: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+        USDT: '0x55d398326f99059ff775485246999027b3197955',
+        ETH: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
+        USDC: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
+        WBNB: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+    };
 
-    private async getTransparentContract(chainId = defaultChainId){
-        if (!this.transparentContract){
+    private async getTransparentContract(chainId = defaultChainId) {
+        if (!this.transparentContract) {
             this.transparentContract = await this.getEthContractByName(this.transparentContractName, chainId);
         }
         return this.transparentContract;
     }
 
     /**
-     * Get amount of input token in USDT for V2 and V3 protocols
+     * Get amount of input token in USDT for V2 and V3 protocols (works only for direct pairs)
      * @param amountFrom
      * @param tokenFrom
      * @param chainId
      */
-    async getAmountUsd(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
-        if (this.isUsdt(tokenFrom, chainId)) return {v2: amountFrom, v3: amountFrom};
-        const contract = await this.getTransparentContract(chainId);
-        return contract.methods.consult(tokenFrom, amountFrom, tokens.USDT[chainId].address).call().then(([v2, v3]) => ({v2, v3}));
+    async getAmountUsd(amountFrom: string, tokenFrom: string, chainId = defaultChainId): Promise<{ v2: string, v3: string }> {
+        return Promise.all([
+            this.getAmountUsdV2(amountFrom, tokenFrom, chainId),
+            this.getAmountUsdV3(amountFrom, tokenFrom, chainId)
+        ]).then(([v2, v3]) => ({v2, v3}))
     }
 
-    private isUsdt(tokenAddress: string, chainId=  defaultChainId) {
+    private isUsdt(tokenAddress: string, chainId = defaultChainId) {
         return tokenAddress.toLowerCase() === tokens.USDT[chainId].address.toLowerCase();
     }
 
@@ -54,10 +66,34 @@ export class BlockchainService {
      * @param tokenFrom
      * @param chainId
      */
-    async getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+    async getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId = defaultChainId): Promise<string> {
+        if (!Number(amountFrom)) return '0';
+        tokenFrom = tokenFrom.toLowerCase();
         if (this.isUsdt(tokenFrom, chainId)) return amountFrom;
         const contract = await this.getTransparentContract(chainId);
-        return contract.methods.consultV2(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
+        const pairs = [...await this.#getCorePairsV2()];
+        if (!Object.values(BlockchainService.coreTokens).includes(tokenFrom)) {
+            pairs.push(...await this.#getCorePairsForTokenV2(tokenFrom))
+        }
+        const graph = this.#buildGraph(tokenFrom, tokens.USDT[chainId].address, pairs);
+        const paths = this.#dfsFindPaths(graph, tokenFrom, tokens.USDT[chainId].address.toLowerCase());
+
+        let result;
+        if (!paths.length) throw Error(`Can't find path for searching price`);
+        for (const path of paths) {
+            result = amountFrom;
+            for (const index in path) {
+                const tokenA = path[index];
+                const tokenB = path[Number(index) + 1];
+                if (tokenB) {
+                    result = await contract.methods.consultV2(tokenA, result, tokenB).call()
+                    if (!result) break;
+                }
+            }
+            if (Number(result)) return result
+
+        }
+        return result;
     }
 
     /**
@@ -66,10 +102,196 @@ export class BlockchainService {
      * @param tokenFrom
      * @param chainId
      */
-    async getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId=  defaultChainId){
+    async getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId = defaultChainId): Promise<string> {
+        if (!Number(amountFrom)) return '0';
+        tokenFrom = tokenFrom.toLowerCase();
         if (this.isUsdt(tokenFrom, chainId)) return amountFrom;
         const contract = await this.getTransparentContract(chainId);
-        return contract.methods.consultV3(tokenFrom, amountFrom, tokens.USDT[chainId].address).call();
+        const pairs = [...await this.#getCorePairsV3()];
+        if (!Object.values(BlockchainService.coreTokens).includes(tokenFrom)) {
+            pairs.push(...await this.#getCorePairsForTokenV3(tokenFrom))
+        }
+        const graph = this.#buildGraph(tokenFrom, tokens.USDT[chainId].address, pairs);
+        const paths = this.#dfsFindPaths(graph, tokenFrom, tokens.USDT[chainId].address.toLowerCase());
+
+        let result;
+        if (!paths.length) throw Error(`Can't find path for searching price`);
+
+        for (const path of paths) {
+            result = amountFrom;
+            for (const index in path) {
+                const tokenA = path[index];
+                const tokenB = path[Number(index) + 1];
+                if (tokenB) {
+                    result = await contract.methods.consultV3(tokenA, result, tokenB).call()
+                    if (!result) break;
+                }
+            }
+            if (Number(result)) return result;
+        }
+        return result;
+    }
+
+    /**
+     * Build all paths for token from and token to
+     * @param graph
+     * @param start - token from
+     * @param end - token to
+     * @param visited
+     * @param path
+     * @param paths
+     * @param allPath
+     * @private
+     */
+    #dfsFindPaths = (graph, start, end, visited = new Set(), path = [], paths = [], allPath = []) => {
+        const PATH_LENGTH_LIMIT = 4;
+        visited.add(start);
+        path.push(start);
+
+        if (path.length <= PATH_LENGTH_LIMIT) {
+            if (start === end && path.length > 1) {
+                allPath.push([...path]);
+            } else {
+                const neighbors = graph[start];
+                for (const neighbor of neighbors) {
+                    if (!visited.has(neighbor)) {
+                        this.#dfsFindPaths(graph, neighbor, end, visited, path, paths, allPath);
+                    }
+                }
+            }
+        }
+        visited.delete(start);
+        path.pop();
+        return _.sortBy(allPath, 'length');
+    }
+
+    /**
+     * Build graph for tokens
+     * @param tokensFrom
+     * @param tokenTo
+     * @param pairs
+     * @private
+     */
+
+    #buildGraph = (tokensFrom: string, tokenTo: string, pairs: any[]) => {
+        const graph = {};
+        const tokensList = _.compact(_.uniq([...Object.values(BlockchainService.coreTokens), tokensFrom.toLowerCase(), tokenTo.toLowerCase()]));
+        for (const tokenAddress of tokensList) {
+            graph[tokenAddress] = [];
+            for (const {tokenA, tokenB} of pairs) {
+                const tokens = [tokenA, tokenB];
+                if (tokens.includes(tokenAddress)) {
+                    graph[tokenAddress].push(..._.without(tokens, tokenAddress));
+                }
+            }
+            graph[tokenAddress] = _.uniq(graph[tokenAddress]);
+        }
+        return graph;
+    }
+
+    #checkDb = (handlerName: string = 'checkDb') => {
+        if (!this.db) {
+            throw Error(`${handlerName}:: call 'setDb' is required`)
+        }
+    }
+
+    #getCorePairsForTokenV2 = async (tokenAddress: string) => {
+        this.#checkDb('getCorePairsForTokenV2');
+        return this.db.collection('pairs').find({
+            $or: [
+                {
+                    swaps: {$gt: 1000},
+                    tokenA: tokenAddress,
+                    tokenB: {$in: Object.values(BlockchainService.coreTokens)}
+                },
+                {
+                    swaps: {$gt: 1000},
+                    tokenA: {$in: Object.values(BlockchainService.coreTokens)},
+                    tokenB: tokenAddress
+                }
+            ]
+        }, {
+            projection: {
+                tokenA: 1,
+                tokenB: 1,
+            },
+        }).limit(1000).toArray();
+    }
+
+    #getCorePairsForTokenV3 = async (tokenAddress: string) => {
+        this.#checkDb('getCorePairsForTokenV3');
+        return this.db.collection('pools-v3').aggregate([
+            {
+                $match: {
+                    $or: [
+                        {
+                            tokenA: tokenAddress,
+                            tokenB: {$in: Object.values(BlockchainService.coreTokens)}
+                        },
+                        {
+                            tokenA: {$in: Object.values(BlockchainService.coreTokens)},
+                            tokenB: tokenAddress
+                        }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    _id: null,
+                    tokenA: '$tokenA',
+                    tokenB: '$tokenB',
+                },
+            }
+        ]).toArray();
+    }
+
+    #getCorePairsV3 = async () => {
+        this.#checkDb('getCorePairsV3');
+        if (!this.corePairsV3) {
+            this.corePairsV3 = await this.db.collection('pools-v3').aggregate([
+                {
+                    $match: {
+                        tokenA: {$in: Object.values(BlockchainService.coreTokens)},
+                        tokenB: {$in: Object.values(BlockchainService.coreTokens)}
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            tokenA: '$tokenA',
+                            tokenB: '$tokenB',
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: null,
+                        tokenA: '$_id.tokenA',
+                        tokenB: '$_id.tokenB',
+                    },
+                }
+            ]).toArray();
+            setTimeout(() => this.corePairsV3 = null, 1000 * 60 * 60 * 24)
+        }
+        return this.corePairsV3;
+    }
+
+    #getCorePairsV2 = async () => {
+        this.#checkDb('getCorePairsV2');
+        if (!this.corePairsV2) {
+            this.corePairsV2 = await this.db.collection('pairs').find({
+                tokenA: {$in: Object.values(BlockchainService.coreTokens)},
+                tokenB: {$in: Object.values(BlockchainService.coreTokens)},
+                swaps: {$gt: 1000}
+            }, {
+                projection: {
+                    tokenA: 1,
+                    tokenB: 1,
+                },
+            }).limit(1000).toArray();
+            setTimeout(() => this.corePairsV2 = null, 1000 * 60 * 60 * 24)
+        }
+        return this.corePairsV2;
     }
 
     /**
@@ -83,7 +305,7 @@ export class BlockchainService {
             return this.web3;
         }
 
-        const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], { timeout: 6000 });
+        const provider = new Web3.providers.HttpProvider(web3Config[chainId].httpHosts[0], {timeout: 6000});
         this.web3 = new Web3(provider);
 
         // to avoid error "Number can only safely store up to 53 bits web3"
@@ -184,12 +406,12 @@ export class BlockchainService {
      */
     async getContractByName(name: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
         if (this.db) {
-            const contract = await this.db.collection('contracts').findOne({ name, chainId });
+            const contract = await this.db.collection('contracts').findOne({name, chainId});
 
             return contract as ContractDb;
         }
 
-        return request.get(`contracts/${name}/name`, { chainId });
+        return request.get(`contracts/${name}/name`, {chainId});
     }
 
     /**
@@ -201,12 +423,12 @@ export class BlockchainService {
      */
     async getContractByAddress(address: string, chainId: ChainId = defaultChainId): Promise<ContractDb> {
         if (this.db) {
-            const contract = await this.db.collection('contracts').findOne({ address: address.toLowerCase(), chainId });
+            const contract = await this.db.collection('contracts').findOne({address: address.toLowerCase(), chainId});
 
             return contract as ContractDb;
         }
 
-        return request.get(`contracts/${address.toLowerCase()}/address`, { chainId });
+        return request.get(`contracts/${address.toLowerCase()}/address`, {chainId});
     }
 
     /**
@@ -349,13 +571,13 @@ export class BlockchainService {
                     return {
                         tokenA: tokens[0],
                         tokenB: tokens[1],
-                        swaps: { $gt: 50 }
+                        swaps: {$gt: 50}
                     };
                 })
             };
 
             const [pair] = await this.db.collection('pairs').find(tokensQuery)
-                .sort({ swaps: -1 })
+                .sort({swaps: -1})
                 .limit(1)
                 .toArray();
 
@@ -386,7 +608,7 @@ export class BlockchainService {
         try {
             const multicall: ContractDb = await this.getContractByName('multicall', chainId);
             const multiCallContract = this.getEthContract(multicall['abi'], multicall['address'], chainId);
-            const { returnData } = await multiCallContract.methods
+            const {returnData} = await multiCallContract.methods
                 .aggregate(callData)
                 .call();
 
@@ -459,10 +681,10 @@ export class BlockchainService {
      * @return {Pair} - Pair
      */
     async getPairByAddress(pairAddress: string, chainId: ChainId = defaultChainId): Promise<Pair | null> {
-        if (!this.db){
+        if (!this.db) {
             throw Error(`getPairByAddress:: call 'setDb' is required`)
         }
-        const pair = await this.db.collection('pairs').findOne({ pairAddress: pairAddress.toLowerCase() });
+        const pair = await this.db.collection('pairs').findOne({pairAddress: pairAddress.toLowerCase()});
         return pair as Pair;
     }
 

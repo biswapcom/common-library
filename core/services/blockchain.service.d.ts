@@ -9,18 +9,33 @@ import Web3 from 'web3';
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
  */
 export declare class BlockchainService {
+    #private;
     private web3;
     private db;
     private transparentContract;
     private transparentContractName;
+    private corePairsV2;
+    private corePairsV3;
+    static coreTokens: {
+        DAI: string;
+        BSW: string;
+        BUSD: string;
+        USDT: string;
+        ETH: string;
+        USDC: string;
+        WBNB: string;
+    };
     private getTransparentContract;
     /**
-     * Get amount of input token in USDT for V2 and V3 protocols
+     * Get amount of input token in USDT for V2 and V3 protocols (works only for direct pairs)
      * @param amountFrom
      * @param tokenFrom
      * @param chainId
      */
-    getAmountUsd(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
+    getAmountUsd(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<{
+        v2: string;
+        v3: string;
+    }>;
     private isUsdt;
     /**
      * Get amount of input token in USDT for V2 protocols
@@ -28,14 +43,14 @@ export declare class BlockchainService {
      * @param tokenFrom
      * @param chainId
      */
-    getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
+    getAmountUsdV2(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
     /**
      * Get best amount of input token in USDT for V3 protocols
      * @param amountFrom
      * @param tokenFrom
      * @param chainId
      */
-    getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<any>;
+    getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
     /**
      * Web3 HTTP-provider
      *
