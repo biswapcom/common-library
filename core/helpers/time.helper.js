@@ -17,7 +17,8 @@ const getDeltaTimestamps = () => {
     const t48h = (0, date_fns_1.getUnixTime)((0, date_fns_1.startOfMinute)((0, date_fns_1.subDays)(utcCurrentTime, 2)));
     const t7d = (0, date_fns_1.getUnixTime)((0, date_fns_1.startOfMinute)((0, date_fns_1.subWeeks)(utcCurrentTime, 1)));
     const t14d = (0, date_fns_1.getUnixTime)((0, date_fns_1.startOfMinute)((0, date_fns_1.subWeeks)(utcCurrentTime, 2)));
-    return { t24h, t48h, t7d, t14d };
+    const t1m = (0, date_fns_1.getUnixTime)((0, date_fns_1.startOfMinute)((0, date_fns_1.subMonths)(utcCurrentTime, 1)));
+    return { t24h, t48h, t7d, t14d, t1m };
 };
 exports.getDeltaTimestamps = getDeltaTimestamps;
 const getBlockDater = async (date) => {
@@ -29,12 +30,13 @@ exports.getBlockDater = getBlockDater;
  * Returns block numbers for now, 24h ago, 48h ago, 7d ago and 14d ago relative to current date and time.
  */
 const getBlockNumbersByPeriods = async () => {
-    const [now, t24h, t48h, t7d, t14d] = await Promise.all([
+    const [now, t24h, t48h, t7d, t14d, t1m] = await Promise.all([
         (0, exports.getBlockDater)((0, moment_1.default)()),
         (0, exports.getBlockDater)((0, moment_1.default)().subtract(1, 'd')),
         (0, exports.getBlockDater)((0, moment_1.default)().subtract(2, 'd')),
         (0, exports.getBlockDater)((0, moment_1.default)().subtract(1, 'w')),
-        (0, exports.getBlockDater)((0, moment_1.default)().subtract(2, 'w'))
+        (0, exports.getBlockDater)((0, moment_1.default)().subtract(2, 'w')),
+        (0, exports.getBlockDater)((0, moment_1.default)().subtract(1, 'm')),
     ]);
     return {
         now: now.block,
@@ -42,6 +44,7 @@ const getBlockNumbersByPeriods = async () => {
         t48h: t48h.block,
         t7d: t7d.block,
         t14d: t14d.block,
+        t1m: t1m.block
     };
 };
 exports.getBlockNumbersByPeriods = getBlockNumbersByPeriods;

@@ -19,6 +19,7 @@ export interface DeltaTime {
     t48h: number;
     t7d: number;
     t14d: number;
+    t1m: number;
 }
 export interface BlockDater {
     date: string | Date;
