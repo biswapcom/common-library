@@ -1,3 +1,13 @@
+export const Q96: bigint = 2n ** 96n;
+
+export function  getLiquidityByY(amountY: bigint, sqrtPrice96: bigint): bigint {
+    return (amountY * Q96) / sqrtPrice96;
+}
+
+export function  getLiquidityByX(amountX: bigint, sqrtPrice96: bigint): bigint {
+    return (amountX * sqrtPrice96) / Q96;
+}
+
 export function getSqrtRatioAtTick(tick: number) {
     const MAX_TICK = 887272;
     const absTick = tick < 0 ? BigInt(-tick) : BigInt(tick);
