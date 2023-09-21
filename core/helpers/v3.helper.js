@@ -1,6 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSqrtRatioAtTick = void 0;
+exports.getSqrtRatioAtTick = exports.getLiquidityByX = exports.getLiquidityByY = exports.Q96 = void 0;
+exports.Q96 = 2n ** 96n;
+function getLiquidityByY(amountY, sqrtPrice96) {
+    return (amountY * exports.Q96) / sqrtPrice96;
+}
+exports.getLiquidityByY = getLiquidityByY;
+function getLiquidityByX(amountX, sqrtPrice96) {
+    return (amountX * sqrtPrice96) / exports.Q96;
+}
+exports.getLiquidityByX = getLiquidityByX;
 function getSqrtRatioAtTick(tick) {
     const MAX_TICK = 887272;
     const absTick = tick < 0 ? BigInt(-tick) : BigInt(tick);
