@@ -141,6 +141,7 @@ export declare class BlockchainService {
      * @return {string} - USDT in Wei
      */
     exchangeTokenToUSDT(amountFrom: string, tokenFrom: string, chainId?: ChainId, decimalPlaces?: number): Promise<string>;
+    private getCoreTokenAmount;
     /**
      * Core pair by token addresses
      *
@@ -153,6 +154,8 @@ export declare class BlockchainService {
      */
     private getCorePair;
     private getExchangePair;
+    private getExchangePairV2;
+    private getExchangePairV3;
     multiCall(ABI: any, calls: MulticallCall[], chainId?: ChainId): Promise<any>;
     /**
      * List of farms addresses

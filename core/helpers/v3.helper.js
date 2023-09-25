@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSqrtRatioAtTick = exports.getLiquidityByX = exports.getLiquidityByY = exports.Q96 = void 0;
+exports.getTokenXYFromToken = exports.priceUndecimal2PriceDecimal = exports.point2PriceDecimal = exports.getSqrtRatioAtTick = exports.getLiquidityByX = exports.getLiquidityByY = exports.Q96 = void 0;
+const bignumber_js_1 = __importDefault(require("bignumber.js"));
 exports.Q96 = 2n ** 96n;
 function getLiquidityByY(amountY, sqrtPrice96) {
     return (amountY * exports.Q96) / sqrtPrice96;
@@ -63,3 +67,42 @@ function getSqrtRatioAtTick(tick) {
     return sqrtPriceX96.toString();
 }
 exports.getSqrtRatioAtTick = getSqrtRatioAtTick;
+const point2PriceDecimal = (tokenA, tokenB, point) => {
+    let priceDecimal = 0;
+    let needReverse = false;
+    const { tokenX, tokenY } = (0, exports.getTokenXYFromToken)(tokenA, tokenB);
+    if (point > 0) {
+        priceDecimal = (0, exports.priceUndecimal2PriceDecimal)(tokenX, tokenY, new bignumber_js_1.default(1.0001 ** point));
+        console.log('-----------priceDecimal---------');
+        console.log(priceDecimal);
+        needReverse = tokenA.address.toLowerCase() > tokenB.address.toLowerCase();
+    }
+    else {
+        priceDecimal = (0, exports.priceUndecimal2PriceDecimal)(tokenY, tokenX, new bignumber_js_1.default(1.0001 ** (-point)));
+        needReverse = tokenA.address.toLowerCase() < tokenB.address.toLowerCase();
+    }
+    if (needReverse) {
+        priceDecimal = 1 / priceDecimal;
+    }
+    return priceDecimal;
+};
+exports.point2PriceDecimal = point2PriceDecimal;
+const priceUndecimal2PriceDecimal = (tokenA, tokenB, priceUndecimalAByB) => {
+    return Number(priceUndecimalAByB.times(10 ** tokenA.decimals).div(10 ** tokenB.decimals));
+};
+exports.priceUndecimal2PriceDecimal = priceUndecimal2PriceDecimal;
+const getTokenXYFromToken = (tokenA, tokenB) => {
+    if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+        return {
+            tokenX: { ...tokenA },
+            tokenY: { ...tokenB }
+        };
+    }
+    else {
+        return {
+            tokenX: { ...tokenB },
+            tokenY: { ...tokenA }
+        };
+    }
+};
+exports.getTokenXYFromToken = getTokenXYFromToken;

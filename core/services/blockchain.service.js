@@ -487,8 +487,7 @@ class BlockchainService {
             if (!pair) {
                 return '0';
             }
-            [reserveA, reserveB] = [(0, _helpers_1.toBN)(pair.reserveA), (0, _helpers_1.toBN)(pair.reserveB)];
-            coreTokenAmount = (pair.tokenA === tokenFrom) ? amount.multipliedBy(reserveB).div(reserveA) : amount.multipliedBy(reserveA).div(reserveB);
+            coreTokenAmount = await this.getCoreTokenAmount(pair, tokenFrom, amount);
             coreToken = pair.tokenA === tokenFrom ? pair.tokenB : pair.tokenA;
         }
         if (coreToken === coreTokens.USDT) {
@@ -504,6 +503,17 @@ class BlockchainService {
             ? coreTokenAmount.multipliedBy(reserveB).div(reserveA)
             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
         return usdtAmount.toFixed(decimalPlaces);
+    }
+    async getCoreTokenAmount(pair, tokenFrom, amount) {
+        if (!pair.isV3) {
+            const [reserveA, reserveB] = [(0, _helpers_1.toBN)(pair.reserveA), (0, _helpers_1.toBN)(pair.reserveB)];
+            return (pair.tokenA === tokenFrom) ? amount.multipliedBy(reserveB).div(reserveA) : amount.multipliedBy(reserveA).div(reserveB);
+        }
+        const [tokenA, tokenB] = await this.db.collection('tokens').find({
+            address: { $in: [pair.tokenA, pair.tokenB] }
+        }).toArray();
+        const price = (0, _helpers_1.point2PriceDecimal)(tokenA, tokenB, pair.currentPoint);
+        return new bignumber_js_1.default(amount).div(price);
     }
     /**
      * Core pair by token addresses
@@ -536,6 +546,12 @@ class BlockchainService {
     }
     async getExchangePair(tokenFrom, chainId = _configs_1.defaultChainId) {
         const coreTokens = Object.values(this.getCoreTokens(chainId));
+        const pairV2 = await this.getExchangePairV2(tokenFrom, coreTokens, chainId);
+        if (pairV2)
+            return pairV2;
+        return this.getExchangePairV3(tokenFrom, coreTokens, chainId);
+    }
+    async getExchangePairV2(tokenFrom, coreTokens, chainId = _configs_1.defaultChainId) {
         if (this.db) {
             const tokensQuery = {
                 // chainId,
@@ -560,9 +576,44 @@ class BlockchainService {
         const exchangePair = await _services_1.requestService.post('pool/exchange-pair', {
             tokenFrom,
             coreTokens,
+            protocol: 'v2',
             chainId
         });
         return exchangePair.data;
+    }
+    async getExchangePairV3(tokenFrom, coreTokens, chainId = _configs_1.defaultChainId) {
+        let result = null;
+        if (this.db) {
+            const tokensQuery = {
+                // chainId,
+                version: 2,
+                $or: coreTokens.map(tokenAddress => {
+                    const tokens = [tokenFrom.toLowerCase(), tokenAddress.toLowerCase()].sort();
+                    return {
+                        tokenA: tokens[0],
+                        tokenB: tokens[1],
+                        swaps: { $gt: 20 }
+                    };
+                })
+            };
+            const [pair] = await this.db.collection('pools-v3').find(tokensQuery)
+                .sort({ swaps: -1 })
+                .limit(1)
+                .toArray();
+            if (pair) {
+                result = pair;
+            }
+        }
+        else {
+            const exchangePair = await _services_1.requestService.post('pool/exchange-pair', {
+                tokenFrom,
+                coreTokens,
+                protocol: 'v3',
+                chainId
+            });
+            result = exchangePair.data;
+        }
+        return Object.assign(result, { isV3: true });
     }
     async multiCall(ABI, calls, chainId = _configs_1.defaultChainId) {
         const callableAbi = new abi_1.Interface(ABI);

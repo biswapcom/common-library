@@ -4,7 +4,7 @@ import {AddAccount, AddedAccount} from 'web3-core';
 import {ContractDb, MulticallCall, Pair} from '@types';
 import {Interface} from '@ethersproject/abi';
 import {Contract} from 'web3-eth-contract';
-import {toBN} from '@helpers';
+import {toBN, point2PriceDecimal} from '@helpers';
 import {ChainId} from '@enums';
 import {defaultChainId, web3Config} from '@configs';
 import {logService, requestService as request} from '@services';
@@ -16,6 +16,10 @@ import * as tokens from '@constants/tokens';
 
 BN.config({EXPONENTIAL_AT: 1000000000});
 
+interface PairWrapper extends Pair {
+    isV3?: boolean,
+    currentPoint? : number
+}
 /**
  * Contains the most frequently used tools for working with contracts, tokens, etc. blockchain
  */
@@ -494,14 +498,10 @@ export class BlockchainService {
             coreTokenAmount = amount;
         } else {
             const pair = await this.getExchangePair(tokenFrom, chainId);
-
             if (!pair) {
                 return '0';
             }
-
-            [reserveA, reserveB] = [toBN(pair.reserveA), toBN(pair.reserveB)];
-
-            coreTokenAmount = (pair.tokenA === tokenFrom) ? amount.multipliedBy(reserveB).div(reserveA) : amount.multipliedBy(reserveA).div(reserveB);
+            coreTokenAmount = await this.getCoreTokenAmount(pair, tokenFrom, amount);
             coreToken = pair.tokenA === tokenFrom ? pair.tokenB : pair.tokenA;
         }
 
@@ -523,6 +523,18 @@ export class BlockchainService {
             : coreTokenAmount.multipliedBy(reserveA).div(reserveB);
 
         return usdtAmount.toFixed(decimalPlaces);
+    }
+
+    private async getCoreTokenAmount(pair: PairWrapper, tokenFrom: string, amount: BN) {
+        if (!pair.isV3) {
+            const [reserveA, reserveB] = [toBN(pair.reserveA), toBN(pair.reserveB)];
+            return (pair.tokenA === tokenFrom) ? amount.multipliedBy(reserveB).div(reserveA) : amount.multipliedBy(reserveA).div(reserveB);
+        }
+        const [tokenA, tokenB] = await this.db.collection('tokens').find({
+            address: {$in: [pair.tokenA, pair.tokenB]}
+        }).toArray();
+        const price = point2PriceDecimal(tokenA, tokenB, pair.currentPoint)
+        return new BN(amount).div(price);
     }
 
     /**
@@ -561,7 +573,12 @@ export class BlockchainService {
 
     private async getExchangePair(tokenFrom: string, chainId: number = defaultChainId): Promise<Pair> {
         const coreTokens: string[] = Object.values(this.getCoreTokens(chainId));
+        const pairV2 = await this.getExchangePairV2(tokenFrom, coreTokens, chainId);
+        if (pairV2) return pairV2;
+        return this.getExchangePairV3(tokenFrom, coreTokens, chainId);
+    }
 
+    private async getExchangePairV2(tokenFrom: string, coreTokens: string[], chainId: number = defaultChainId){
         if (this.db) {
             const tokensQuery = {
                 // chainId,
@@ -591,10 +608,48 @@ export class BlockchainService {
         const exchangePair = await request.post('pool/exchange-pair', {
             tokenFrom,
             coreTokens,
+            protocol: 'v2',
             chainId
         });
 
         return exchangePair.data as Pair;
+    }
+
+    private async getExchangePairV3(tokenFrom: string, coreTokens: string[], chainId: number = defaultChainId): Promise<Pair> {
+        let result = null;
+        if (this.db) {
+            const tokensQuery = {
+                // chainId,
+                version: 2,
+                $or: coreTokens.map(tokenAddress => {
+                    const tokens = [tokenFrom.toLowerCase(), tokenAddress.toLowerCase()].sort();
+                    return {
+                        tokenA: tokens[0],
+                        tokenB: tokens[1],
+                        swaps: {$gt: 20}
+                    };
+                })
+            };
+
+            const [pair] = await this.db.collection('pools-v3').find(tokensQuery)
+                .sort({swaps: -1})
+                .limit(1)
+                .toArray();
+
+            if (pair) {
+                result =  pair as Pair;
+            }
+        }else{
+            const exchangePair = await request.post('pool/exchange-pair', {
+                tokenFrom,
+                coreTokens,
+                protocol: 'v3',
+                chainId
+            });
+
+            result = exchangePair.data as Pair;
+        }
+        return Object.assign(result, {isV3: true});
     }
 
     async multiCall(ABI, calls: MulticallCall[], chainId: ChainId = defaultChainId) {

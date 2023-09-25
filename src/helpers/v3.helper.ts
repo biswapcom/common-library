@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export const Q96: bigint = 2n ** 96n;
 
 export function  getLiquidityByY(amountY: bigint, sqrtPrice96: bigint): bigint {
@@ -53,4 +55,48 @@ export function getSqrtRatioAtTick(tick: number) {
 
     const sqrtPriceX96 = BigInt(ratio >> 32n) + (ratio % (1n << 32n) == 0n ? 0n : 1n);
     return sqrtPriceX96.toString();
+}
+
+export const point2PriceDecimal = (
+    tokenA,
+    tokenB,
+    point: number
+): number => {
+    let priceDecimal = 0;
+    let needReverse = false;
+    const {tokenX, tokenY} = getTokenXYFromToken(tokenA, tokenB)
+    if (point > 0) {
+        priceDecimal = priceUndecimal2PriceDecimal(tokenX, tokenY, new BigNumber(1.0001 ** point))
+        console.log('-----------priceDecimal---------');
+        console.log(priceDecimal)
+        needReverse = tokenA.address.toLowerCase() > tokenB.address.toLowerCase()
+    } else {
+        priceDecimal = priceUndecimal2PriceDecimal(tokenY, tokenX, new BigNumber(1.0001 ** (-point)))
+        needReverse = tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
+    }
+    if (needReverse) {
+        priceDecimal = 1 / priceDecimal
+    }
+    return priceDecimal
+}
+
+export const priceUndecimal2PriceDecimal = (
+    tokenA,
+    tokenB,
+    priceUndecimalAByB: BigNumber): number => {
+    return Number(priceUndecimalAByB.times(10 ** tokenA.decimals).div(10 **tokenB.decimals))
+}
+
+export const getTokenXYFromToken = (tokenA, tokenB): {tokenX, tokenY} => {
+    if (tokenA.address.toLowerCase() < tokenB.address.toLowerCase()) {
+        return {
+            tokenX: {...tokenA},
+            tokenY: {...tokenB}
+        }
+    } else {
+        return {
+            tokenX: {...tokenB},
+            tokenY: {...tokenA}
+        }
+    }
 }
