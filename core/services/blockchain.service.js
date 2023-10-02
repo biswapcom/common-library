@@ -613,7 +613,7 @@ class BlockchainService {
             });
             result = exchangePair.data;
         }
-        return Object.assign(result, { isV3: true });
+        return result ? Object.assign(result, { isV3: true }) : result;
     }
     async multiCall(ABI, calls, chainId = _configs_1.defaultChainId) {
         const callableAbi = new abi_1.Interface(ABI);

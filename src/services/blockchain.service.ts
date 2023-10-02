@@ -630,7 +630,6 @@ export class BlockchainService {
                     };
                 })
             };
-
             const [pair] = await this.db.collection('pools-v3').find(tokensQuery)
                 .sort({swaps: -1})
                 .limit(1)
@@ -649,7 +648,7 @@ export class BlockchainService {
 
             result = exchangePair.data as Pair;
         }
-        return Object.assign(result, {isV3: true});
+        return result ? Object.assign(result, {isV3: true}) : result;
     }
 
     async multiCall(ABI, calls: MulticallCall[], chainId: ChainId = defaultChainId) {
