@@ -299,6 +299,16 @@ export class BlockchainService {
     }
 
     /**
+     * Return db client
+     */
+    getDb(): Db{
+        if (!this.db) {
+            throw Error(`Db is not initialized. Call 'setDb' before you try to get initialized db`);
+        }
+        return this.db;
+    }
+
+    /**
      * Web3 HTTP-provider
      *
      * @param {number} chainId - Chain ID to connect to the correct blockchain network

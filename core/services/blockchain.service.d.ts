@@ -52,6 +52,10 @@ export declare class BlockchainService {
      */
     getAmountUsdV3(amountFrom: string, tokenFrom: string, chainId?: ChainId): Promise<string>;
     /**
+     * Return db client
+     */
+    getDb(): Db;
+    /**
      * Web3 HTTP-provider
      *
      * @param {number} chainId - Chain ID to connect to the correct blockchain network

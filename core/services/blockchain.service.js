@@ -212,10 +212,7 @@ class BlockchainService {
             return this.corePairsV2;
         }
         /**
-         * Web3 HTTP-provider
-         *
-         * @param {number} chainId - Chain ID to connect to the correct blockchain network
-         * @return {Web3}
+         * Return db client
          */
         );
     }
@@ -315,6 +312,15 @@ class BlockchainService {
                 return result;
         }
         return result;
+    }
+    /**
+     * Return db client
+     */
+    getDb() {
+        if (!this.db) {
+            throw Error(`Db is not initialized. Call 'setDb' before you try to get initialized db`);
+        }
+        return this.db;
     }
     /**
      * Web3 HTTP-provider
