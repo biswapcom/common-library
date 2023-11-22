@@ -34,4 +34,6 @@ export interface User {
 
     // Affiliate program ID
     clickId?: string;
+    farmPopupOff?: boolean;
+    investPoolsBalance?: string;
 }

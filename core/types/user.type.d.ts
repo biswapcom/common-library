@@ -27,4 +27,6 @@ export interface User {
     autoPoolShares: string;
     chainId?: number;
     clickId?: string;
+    farmPopupOff?: boolean;
+    investPoolsBalance?: string;
 }
