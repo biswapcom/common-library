@@ -1,6 +1,6 @@
 {
   "name": "@biswap/common-library",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "private": false,
   "description": "All common tools, utils, services and etc. for Biswap products",
   "keywords": [

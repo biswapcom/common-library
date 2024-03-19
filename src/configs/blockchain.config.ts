@@ -7,7 +7,7 @@ dotenv.config();
 export const web3Config: Web3Map = {
     [ChainId.BSC]: {
         httpHosts: [
-            process.env.BSC_PROVIDER || 'https://bsc-mainnet.nodereal.io/v1/ef269c169b624e28acb38925c0db4e9b'
+            process.env.BSC_PROVIDER || 'https://restless-bitter-cherry.bsc.quiknode.pro/7cd27b905f7b140932a1f71bd12345f24e575e0a3ca'
         ]
     }
 };
