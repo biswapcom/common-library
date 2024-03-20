@@ -30,7 +30,7 @@ dotenv.config();
 exports.web3Config = {
     [_enums_1.ChainId.BSC]: {
         httpHosts: [
-            process.env.BSC_PROVIDER || 'https://restless-bitter-cherry.bsc.quiknode.pro/7cd27b905f7b140932a1f71bd12345f24e575e0a3ca'
+            process.env.BSC_PROVIDER || process.env.BS_URI || 'https://bsc-mainnet.nodereal.io/v1/27d47106be1c4154a66e1c1cbf36af74'
         ]
     }
 };
